@@ -1,0 +1,7 @@
+import numpy
+import miniwizpl
+import socket
+what does this mean
+hello world end file
+there is a problem with something like this: hello world;
+in this case, world; is not in our alphabet
