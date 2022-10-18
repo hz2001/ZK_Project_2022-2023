@@ -77,7 +77,7 @@ strings_not_present = [
     'import socket'
 ]
 
-with open("test.txt", 'r') as f:
+with open(sys.argv[1], 'r') as f:
     file_data = f.read()
 
 
