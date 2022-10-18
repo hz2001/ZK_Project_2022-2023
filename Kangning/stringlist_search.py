@@ -94,11 +94,6 @@ def stateCal(s):
     return result
 
 
-def stateComp(state1, state2):
-    if stateCal(state1) == stateCal(state2):
-        return True
-    else:
-        return False
 
 accept = tuple([255]*len(strings_present))
 accept = stateCal(accept)
@@ -140,5 +135,5 @@ print(outputs)
 
 # compile the ZK statement to an EMP file
 # TODO: what reduce is doing here?
-output = functools.reduce(lambda a, b: a & b, outputs)
-print_emp(output, 'miniwizpl_test.cpp')
+#output = functools.reduce(lambda a, b: a & b, outputs)
+print_emp(outputs, 'miniwizpl_test.cpp')
