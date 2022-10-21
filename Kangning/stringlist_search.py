@@ -108,7 +108,7 @@ def run_dfa(dfa, string):
             # transform all tuples to numbers
             dfa_state = stateCal(dfa_state)
             next_state = stateCal(next_state)
-            output = mux(state == dfa_state & (word == dfa_word),
+            output = mux((state == dfa_state) & (word == dfa_word),
                          next_state,
                          output)
 
