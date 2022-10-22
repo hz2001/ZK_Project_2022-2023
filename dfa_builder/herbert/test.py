@@ -1,6 +1,6 @@
 import sys
 
-whitelist = ["import numpy", "import socket", "hello world", "import miniwizpl"]
+whitelist = ["hello world hello world numpy"]
 
 
 
