@@ -1,5 +1,6 @@
 import sys
 import functools
+import hashlib
 from miniwizpl import SecretInt, SecretList, mux, public_foreach, print_emp
 
 if len(sys.argv) != 2:
@@ -7,11 +8,9 @@ if len(sys.argv) != 2:
     sys.exit()
 
 def word_to_integer(word):
-    hash = 0
-
-    for i in range(len(word)):
-        hash += (ord(word[i]) << 8 * i)
-
+    hash = hashlib.sha256(word.encode('utf-8')).digest()
+    hash = int.from_bytes(hash, 'big')
+    hash = hash >> 8*28+1
     return hash
 
 
