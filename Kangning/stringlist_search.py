@@ -110,13 +110,16 @@ def run_dfa(dfa, string):
             output = mux((state == dfa_state) & (word == dfa_word),
                          next_state,
                          output)
-
+        #TODO: update counter if one individual state == accept and change output to 0 for this string
         output = mux(state == accept, accept, output)
+
         return output
 
     return public_foreach(string,
                           next_state_fun,
                           zero_state)
+
+#TODO: add one function call in next_state_fun() where a list of counters are updated.
 
 '''
 def public_foreach(ls, fn, init):
@@ -129,10 +132,10 @@ def public_foreach(ls, fn, init):
 # define the ZK statement
 
 outputs = (run_dfa(dfa, file_string) == accept)
-
+#TODO: not checking the run_dfa() result. Instead, check the counter for both allow-list and block-list.
 print(outputs)
 
 # compile the ZK statement to an EMP file
-# TODO: what reduce is doing here?
+
 #output = functools.reduce(lambda a, b: a & b, outputs)
 print_emp(outputs, 'miniwizpl_test.cpp')
