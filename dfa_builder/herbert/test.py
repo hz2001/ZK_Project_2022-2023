@@ -1,8 +1,14 @@
 import sys
 
-whitelist = ["import numpy", "import socket", "hello world", "import miniwizpl"]
+whitelist = ["hello world hello world numpy"]
 
+def word_to_integer(word):
+    hash = 0
 
+    for i in range(len(word)):
+        hash += (ord(word[i]) << 8 * i)
+
+    return hash
 
 '''1:import; 2:numpy; 3:socket; 4:hello; 5:world'''
 # map each element into a state
@@ -132,27 +138,30 @@ def assert_whitelist(lst, file: str) -> bool:
 
 def main():
     args = sys.argv[1:]
-    if len(args) != 1:
-        print("argument length not correct")
-    elif type(args[0]) is not str:
-        print("argument must have a file name string")
-    else:
-        with open(args[0], mode="r") as file:
-            temp = [line for line in file.read().splitlines()]
-            doc = " ".join(temp)
-        file.close()
-
-        print("alphabet = " + str(parse_list(whitelist)))
-
-        print("state dict = " + str(build_states(whitelist)))
-
-        print("zero_states = " + str(get_zero_states(whitelist, parse_list(whitelist))))
-
-        print("accept_states = " + str(get_accept_states(whitelist, parse_list(whitelist))))
-
-        print(doc)
-
-        print(assert_whitelist(lst=whitelist, file=doc))
+    # if len(args) != 1:
+    #     print("argument length not correct")
+    # elif type(args[0]) is not str:
+    #     print("argument must have a file name string")
+    # else:
+    #     with open(args[0], mode="r") as file:
+    #         temp = [line for line in file.read().splitlines()]
+    #         doc = " ".join(temp)
+    #     file.close()
+    #
+    #     print("alphabet = " + str(parse_list(whitelist)))
+    #
+    #     print("state dict = " + str(build_states(whitelist)))
+    #
+    #     print("zero_states = " + str(get_zero_states(whitelist, parse_list(whitelist))))
+    #
+    #     print("accept_states = " + str(get_accept_states(whitelist, parse_list(whitelist))))
+    #
+    #     print(doc)
+    #
+    #     print(assert_whitelist(lst=whitelist, file=doc))
+    print(word_to_integer("import"))
+    print(word_to_integer("import_init"))
+    print(word_to_integer("_init"))
 
 
 if __name__ == "__main__":
