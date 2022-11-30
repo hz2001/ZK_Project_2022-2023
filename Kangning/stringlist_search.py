@@ -7,10 +7,11 @@ if len(sys.argv) != 2:
     print("Usage: python dfa_example.py <target_filename>")
     sys.exit()
 
+
 def word_to_integer(word):
     hash = hashlib.sha256(word.encode('utf-8')).digest()
     hash = int.from_bytes(hash, 'big')
-    hash = hash >> 8*28+1
+    hash = hash >> 8 * 28 + 1
     return hash
 
 
@@ -31,7 +32,6 @@ def equals(pointer, state):
     return True
 
 
-
 def dfa_from_string(stringlist):
     length = len(stringlist)
     pointer = [0] * length
@@ -47,7 +47,7 @@ def dfa_from_string(stringlist):
         counter = len(states)
         for word in wordlist:
             pointer = state.copy()
-            for i in range(length): # 0,1,2
+            for i in range(length):  # 0,1,2
                 if state[i] != accept_state:
                     if word == stringlist[i].split()[state[i]]:
                         if islast(state[i], stringlist[i]):
@@ -65,6 +65,7 @@ def dfa_from_string(stringlist):
             finished = True
     return next_state
 
+
 strings_present = [
     'import socket',
     'import numpy',
@@ -79,25 +80,30 @@ strings_not_present = [
 with open(sys.argv[1], 'r') as f:
     file_data = f.read()
 
-
 file_data = file_data.split()
 file_string = SecretList([word_to_integer(c) for c in file_data])
 
 dfa = dfa_from_string(strings_present)
 
+
 # The helper function for comparing two state values
 def stateCal(s):
     result = 0
     for i in range(len(s)):
-        result += (s[i]<<8*i)
+        result += (s[i] << 8 * i)
     return result
 
 
+# TODO: a reverse version of stateCal() to transform a number back to a state tuple.
 
-accept = tuple([255]*len(strings_present))
+accept = tuple([255] * len(strings_present))
 accept = stateCal(accept)
-zero_state = tuple([0]*len(strings_present))
+zero_state = tuple([0] * len(strings_present))
 zero_state = stateCal(zero_state)
+
+
+# TODO: actual_counter = [0,0,0,...]
+# TODO: expected_counter = [1,2,3,...]
 
 def run_dfa(dfa, string):
     def next_state_fun(word, state):
@@ -109,9 +115,11 @@ def run_dfa(dfa, string):
             next_state = stateCal(next_state)
             output = mux((state == dfa_state) & (word == dfa_word),
                          next_state,
-                         output)
-        #TODO: update counter if one individual state == accept and change output to 0 for this string
-        output = mux(state == accept, accept, output)
+                         output)  # output here is a number, not a tuple
+            # TODO: check if output has any accept state for a single string: need to use the reverse version of
+            #  stateCal()
+            # TODO: if any accept state, actual_counter[index]++ and change the state back to 0
+        output = mux(state == accept, accept, output)  # TODO: this line might need to be changed for the counter.
 
         return output
 
@@ -119,7 +127,6 @@ def run_dfa(dfa, string):
                           next_state_fun,
                           zero_state)
 
-#TODO: add one function call in next_state_fun() where a list of counters are updated.
 
 '''
 def public_foreach(ls, fn, init):
@@ -131,11 +138,12 @@ def public_foreach(ls, fn, init):
 
 # define the ZK statement
 
+
 outputs = (run_dfa(dfa, file_string) == accept)
-#TODO: not checking the run_dfa() result. Instead, check the counter for both allow-list and block-list.
+# TODO: instead of comparing the run_dfa result, we will need to compare the actual_counter with the expected_counter.
 print(outputs)
 
 # compile the ZK statement to an EMP file
 
-#output = functools.reduce(lambda a, b: a & b, outputs)
+# output = functools.reduce(lambda a, b: a & b, outputs)
 print_emp(outputs, 'miniwizpl_test.cpp')
