@@ -4,5 +4,9 @@ import socket
 what does this mean
 hello world hello world numpy
 hello world end file
-there is a problem with something like this: hello world;
 in this case, world; is not in our alphabet
+cup hello import world import
+          import socket
+
+import numpy hello
+sorry numpy dear  (可能出现sorry numpy hello的情况，但是这个并不在 list 里面)

@@ -1,9 +1,10 @@
 # author: Herbert Zhang
 # Date: 9/13/2022
 import sys
-from miniwizpl import SecretInt, SecretList, mux, public_foreach, print_emp
+from miniwizpl import SecretInt, SecretList, mux, public_foreach, print_emp, assert0
+import timeit
 
-whitelist = ["import numpy", "import socket", "hello world hello", "something"]
+whitelist = ["import numpy", "import socket", "import hello import world import world import", "something"]  # buggy
 
 
 # whitelist = ["hello world hello world numpy", "hello mini hello mini hello"]
@@ -21,7 +22,8 @@ def word_to_integer(word):
 
     return hash
 
-def hash_list(lst:list) -> list:
+
+def hash_list(lst: list) -> list:
     list_result = []
     word_to_init = {}
     for i in whitelist:
@@ -31,11 +33,12 @@ def hash_list(lst:list) -> list:
             # print(word, key)
             elements += " " + str(key)
             if key not in word_to_init:
-                word_to_init[key] = word_to_integer(word+"_init")
+                word_to_init[key] = word_to_integer(word + "_init")
         list_result.append(elements[1:])
     # print(list_result)
     # print(word_to_init)
     return list_result, word_to_init
+
 
 def parse_list(lst: list) -> dict:
     alphabet = {}
@@ -59,8 +62,10 @@ def parse_list(lst: list) -> dict:
     # return alphabet
     return update_alphabet(lst, alphabet, mapping)
 
+
 def update_alphabet(lst, alphabet, mapping):
-    print("alphabet before", alphabet)
+    # print("alphabet before", alphabet)
+    # TODO: remove the redundent code where a word is mapped to the init_ version
     for words in lst:
         elements = words.split(" ")
         if len(elements) > 1:
@@ -89,10 +94,8 @@ def update_alphabet(lst, alphabet, mapping):
             # len(elements) = 1, we ignore it
             pass
 
-    print("alphabet after", alphabet)
+    # print("alphabet after", alphabet)
     return alphabet
-
-
 
 
 '''
@@ -106,18 +109,35 @@ Ex: states: {0:{counter,1,4}, 1:{counter,1,4,2,3,0}, 2:{counter,0,1,4}, 3:{count
 '''
 
 
-def get_zero_states(lst, alphabet):
+# the old version of get zero states method, for reference
+def old_get_zero_states(lst, alphabet, mapping):
     # loop through our list and assign each states
     zero_states = {}
     for words in lst:
         elements = words.split(" ")  # ["hello", "world"]
-        if elements[0] + "_init" in alphabet:
-            zero_states[alphabet[elements[0] + "_init"][0]] = True
-        elif alphabet[elements[0]][
+        element0 = int(elements[0])
+        element0_map = int(elements[0])
+        if mapping[element0] in alphabet:
+            zero_states[mapping[element0]][0] = True
+        elif alphabet[element0][
             0] not in zero_states:  # elements[0] is the first item, alphabet[elements[0]][0] is word id
             zero_states[alphabet[elements[0]][0]] = True
     return [state for state in zero_states], zero_states  # returns a list and a dic which have the same elements
 
+
+def get_zero_states(lst, alphabet, mapping):
+    # loop through our list and assign each states
+    zero_states = {}
+    for words in lst:
+        elements = words.split(" ")  # ["hello", "world"]
+        element0 = int(elements[0])
+        element0_map = int(elements[0])
+        if mapping[element0] in alphabet:
+            zero_states[mapping[element0]][0] = True
+        elif alphabet[element0][
+            0] not in zero_states:  # elements[0] is the first item, alphabet[elements[0]][0] is word id
+            zero_states[alphabet[elements[0]][0]] = True
+    return [state for state in zero_states], zero_states  # returns a list and a dic which have the same elements
 
 
 def get_accept_states(lst, alphabet) -> dict:
@@ -132,9 +152,9 @@ def get_accept_states(lst, alphabet) -> dict:
     return result
 
 
-def build_states(lst: list, zero_states: list) -> dict:
+def build_states(lst: list, zeroStates: list) -> dict:
     # lst represent black list or white list
-    states = {}
+    result = {}
     # initiate the states dictionary
     for word in alphabet:
         word_id = alphabet[word][0]
@@ -142,13 +162,11 @@ def build_states(lst: list, zero_states: list) -> dict:
         '''
         states[word_id] = occurrence_counter + next_states + zero_states
         '''
-        states[word_id] = [alphabet[word][1]] + alphabet[word][2] + zero_states
-    return states
+        result[word_id] = [alphabet[word][1]] + alphabet[word][2] + zeroStates
+    return result
 
 
-
-
-
+startTime = timeit.timeit()
 # initiate all required fields
 args = sys.argv[1:]
 if len(args) != 1:
@@ -157,27 +175,44 @@ elif type(args[0]) is not str:
     print("argument must have a file name string")
 else:
     with open(args[0], mode="r") as file:
-        temp = [line for line in file.read().splitlines()]
-        doc = " ".join(temp)
+        file_data = file.read().split()
     file.close()
     hashed_white_list, word_init_list = hash_list(whitelist)
     alphabet = parse_list(hashed_white_list)
-    # zero_states, zero_dic = get_zero_states(lst=whitelist, alphabet=alphabet)
-    # states = build_states(whitelist,zero_states)
-    # print(states)
-
+    print(alphabet)
+    zero_states, zero_dic = get_zero_states(lst=hashed_white_list, alphabet=alphabet, mapping=word_init_list)
+    states = build_states(hashed_white_list, zero_states)
+    init = states[word_to_integer('else')]
+    print(states)
 
 ###############################
 ### AFTER Using secretList ####
 ###############################
 
-
+file_string = SecretList([word_to_integer(c) for c in file_data])
+print(file_string)
 '''
 alphabet = {'import': [1, 3, [2,3,6]], 'numpy': [2, 1, []], 'socket': [3, 1, []], 'hello': [4, 1, [5]], 'world': [5, 1, []], 'else': [0, 0, []]}       'import': [word id, occurrence, [follow ups]]
 import numpy
 
 Ex: states: {0:{counter,1,4}, 1:{counter,1,4,2,3,0}, 2:{counter,0,1,4}, 3:{counter,0,1,4},4:{counter,0,1,4,5},5{counter,0,1}}
 '''
+
+
+def new_run_dfa(states, doc):
+    def next_state_fun(word, state):
+        result = init
+        for word_id, word_count, words_to_follow in states.items():
+            # TODO:
+
+            # TODO: compare the current state dictionary with the acceptance state dictionary
+            # (which a acceptance dictionary need to be constructed)
+            # if the current_searching_string is finished, then we compare the two
+            pass
+
+    return public_foreach(string,
+                          next_state_fun,
+                          init)
 
 
 def run_dfa(doc: str, lst: list) -> dict:
@@ -203,33 +238,28 @@ def run_dfa(doc: str, lst: list) -> dict:
             current_id = alphabet[current_word][0]  # !! I need to change it here so that I can use MINIWIZPL
         except KeyError:
             current_id = 0
-        '''
-        check if the current word is in our active states, 
-            if so, we add current id to current_searching_string
-            elif current word not in active states, it is not in init state nor following the current string
-        then we need to check if the current word is in init state or accept state;
-        '''
+
         if current_id not in active_states:
             if corresponding_id in active_states:
                 current_searching_string = [corresponding_id]
-                print("current_word=" + str(corresponding_init_word), "word_id=" + str(corresponding_id),
-                      "current_string=" + str(current_searching_string))
+                # print("current_word=" + str(corresponding_init_word), "word_id=" + str(corresponding_id),
+                #       "current_string=" + str(current_searching_string))
                 current_id = corresponding_id  # update current_id, which is used as previous_id in the next iteration
             else:
                 current_searching_string = []
                 current_id = 0
-                print("current_word=" + str(current_word), "word_id=" + str(current_id),
-                      "current_string=" + str(current_searching_string))
+                # print("current_word=" + str(current_word), "word_id=" + str(current_id),
+                #       "current_string=" + str(current_searching_string))
         else:
             if current_id in zero_states and current_id in accept_states:
-                print("current_word=" + str(current_word), "word_id=" + str(current_id),
-                      "current_string=" + str([current_id]), "=> []")
+                # print("current_word=" + str(current_word), "word_id=" + str(current_id),
+                #       "current_string=" + str([current_id]), "=> []")
                 states[current_id][0] -= 1
                 current_searching_string = []
             elif current_id in accept_states:
                 current_searching_string.append(current_id)
-                print("current_word=" + str(current_word), "word_id=" + str(current_id),
-                      "current_string=" + str(current_searching_string), "=> []")
+                # print("current_word=" + str(current_word), "word_id=" + str(current_id),
+                #       "current_string=" + str(current_searching_string), "=> []")
                 for w in current_searching_string:
                     # print(w, states[w][0])
                     states[w][0] -= 1
@@ -237,12 +267,12 @@ def run_dfa(doc: str, lst: list) -> dict:
                 current_searching_string = []
             elif current_id in zero_states:  # maybe do not need this here
                 current_searching_string = [current_id]
-                print("current_word=" + str(current_word), "word_id=" + str(current_id),
-                      "current_string=" + str(current_searching_string))
+                # print("current_word=" + str(current_word), "word_id=" + str(current_id),
+                #       "current_string=" + str(current_searching_string))
             else:
                 current_searching_string.append(current_id)
-                print("current_word=" + str(current_word), "word_id=" + str(current_id),
-                      "current_string=" + str(current_searching_string))
+                # print("current_word=" + str(current_word), "word_id=" + str(current_id),
+                #       "current_string=" + str(current_searching_string))
 
     print(states)
     return states
@@ -255,19 +285,14 @@ def assert_whitelist(lst, file: str) -> bool:
     # file_data = file_data.split()
     # file_string = SecretList([word_to_integer(c) for c in file_data])
 
-    states = run_dfa(file, lst)
-    for word_id in states:
-        if states[word_id][0] > 0 and word_id != 0:
-            # print(word_id, states[word_id][0])
-            return False
     return True
-
 
 
 # print(assert_whitelist(lst=whitelist, file=doc))
 
 # print_emp(outputs, 'miniwizpl_test.cpp')
-
+endTime = timeit.timeit()
+print(endTime - startTime)
 '''
 10/12/2022 update:
 fix the bug when we have a list contain string such as "hello world hello world numpy"
@@ -282,8 +307,7 @@ how many substrings we are searching for
 number of string we are searching for
 lengths of the strings we are searching for
 
-"word_to_integer() function"
-run tests in above parameters
+
 
 
 '''

@@ -2,8 +2,10 @@
 # Date: 9/13/2022
 import sys
 
-whitelist = ["import numpy", "import socket", "hello world hello", "something"]
+whitelist = ["import numpy", "import socket", "import hello import world import", "something"]
+
 # whitelist = ["hello world hello world numpy", "hello mini hello mini hello"]
+
 
 
 # map each element into a state, returns alphabet
