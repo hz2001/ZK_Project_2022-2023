@@ -82,7 +82,7 @@ with open(sys.argv[1], 'r') as f:
 
 file_data = file_data.split()
 file_string = SecretList([word_to_integer(c) for c in file_data])
-
+counter = SecretList()
 dfa = dfa_from_string(strings_present)
 
 
@@ -92,6 +92,7 @@ def stateCal(s):
     for i in range(len(s)):
         result += (s[i] << 8 * i)
     return result
+
 
 
 # TODO: a reverse version of stateCal() to transform a number back to a state tuple.
@@ -118,6 +119,9 @@ def run_dfa(dfa, string):
                          output)  # output here is a number, not a tuple
             # TODO: check if output has any accept state for a single string: need to use the reverse version of
             #  stateCal()
+            #hello world + world peace
+            #((0,0),hello):hello -> ((1,0),world):world -> ((acc,1), peace):peace -> ((acc,acc),):
+            #                                           -> ((0,1),peace):peace  -> ((0,acc), hello)
             # TODO: if any accept state, actual_counter[index]++ and change the state back to 0
         output = mux(state == accept, accept, output)  # TODO: this line might need to be changed for the counter.
 
