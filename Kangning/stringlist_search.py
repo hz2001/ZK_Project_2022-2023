@@ -80,9 +80,10 @@ strings_not_present = [
 with open(sys.argv[1], 'r') as f:
     file_data = f.read()
 
+string_counter = [] # TODO: the string_counter is the expected counter that is agreed and provided by both parties.
 file_data = file_data.split()
 file_string = SecretList([word_to_integer(c) for c in file_data])
-counter = SecretList()
+expected_counter = SecretList(i for i in string_counter)
 dfa = dfa_from_string(strings_present)
 
 
@@ -95,16 +96,16 @@ def stateCal(s):
 
 
 
-# TODO: a reverse version of stateCal() to transform a number back to a state tuple.
+
 
 accept = tuple([255] * len(strings_present))
 accept = stateCal(accept)
 zero_state = tuple([0] * len(strings_present))
 zero_state = stateCal(zero_state)
+# TODO: actual_counter = [0,0,0...]
 
 
-# TODO: actual_counter = [0,0,0,...]
-# TODO: expected_counter = [1,2,3,...]
+
 
 def run_dfa(dfa, string):
     def next_state_fun(word, state):
@@ -117,13 +118,12 @@ def run_dfa(dfa, string):
             output = mux((state == dfa_state) & (word == dfa_word),
                          next_state,
                          output)  # output here is a number, not a tuple
-            # TODO: check if output has any accept state for a single string: need to use the reverse version of
-            #  stateCal()
+
             #hello world + world peace
             #((0,0),hello):hello -> ((1,0),world):world -> ((acc,1), peace):peace -> ((acc,acc),):
             #                                           -> ((0,1),peace):peace  -> ((0,acc), hello)
             # TODO: if any accept state, actual_counter[index]++ and change the state back to 0
-        output = mux(state == accept, accept, output)  # TODO: this line might need to be changed for the counter.
+        output = mux(state == accept, accept, output)
 
         return output
 
