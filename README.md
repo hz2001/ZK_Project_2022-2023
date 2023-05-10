@@ -8,3 +8,7 @@ The second method uses counters to verify if a file contains the substrings we a
 
 However, the second method is implemented with some limitations, as the substrings that is intended to be found/not found in the file must present as the following format: 
 For each element in the list, if [A B C, A D C, E B F, E D C, ...] where A,E is must not 
+
+### dfa_original_V1.0
+The container dfa_original_V1.0 folder contains the progress that we made for code implemented with triditional DFA. Originally, we thought [THIS METHOD](./dfa_original_V1.0/stringlist_search.py) would work fine in all cases to find strings within the stringList that appears at least once in the document; however, there are some cases that this method would not work properly. So we have started a debuging process for this method, which we stated in the [Debugging File](./dfa_original_V1.0/sls_debug.py). In this file, we have proposed a solution for the existing bug, but our solution wouldn't work with the currently version of miniwizpl, since it does not support bitwise operators yet. If Miniwizpl has been updated in the future, we can look into this method to update it as needed.
+
