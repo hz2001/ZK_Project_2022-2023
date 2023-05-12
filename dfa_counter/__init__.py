@@ -67,13 +67,19 @@ def main(target_dir, prime, prime_name, size, operation):
     print("\n", "Latest State: ", val_of(latest_state), "\n")
 
     # assert if the counterList we output matches the counterList provided
+ 
     for i in range(stateLength):
         assert0(counterList[i] - target_counterList[i]) # TODO: currently set to be asserting each string to appear once 
-
+        
     global assertions # TODO: ask is it safe to do so here?
+    
+    
+    # claim a return_state so that we don't have to change the test file.
     if False in assertions:
+        return_state = tuple([255]*len(stringList))
         print("DFA did not reached the accept state \n")
     else:
+        return_state = zero_state
         print("DFA successfully reached the accept state \n")
         
     print("Generating Output \n")
