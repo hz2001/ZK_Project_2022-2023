@@ -19,7 +19,7 @@ class TestStatement(unittest.TestCase):
             A base case to pass, target strings being at the beginning of the corpus 
             No trickiness involved
         '''
-
+        print("\n Test test_base")
         string_target = ['one two', 'three four']
         corpus = 'one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen'
         corpus = corpus.split()
@@ -41,7 +41,7 @@ class TestStatement(unittest.TestCase):
             An intermediate case to pass, target strings in the middle of the corpus 
             The second element of the first target and the first element of the second target overlaps
         '''
-
+        print("\n Test test_intermediate")
         string_target = ['three four', 'four five']
         corpus = 'one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen'
         corpus = corpus.split()
@@ -63,7 +63,7 @@ class TestStatement(unittest.TestCase):
         '''
             An intermediate case to pass, one of the target strings at the beginning and the other at the end of the corpus 
         '''
-
+        print("\n Test test_intermediate2")
         string_target = ['one two', 'fourteen fifteen']
         corpus = 'one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen'
         corpus = corpus.split()
@@ -86,7 +86,7 @@ class TestStatement(unittest.TestCase):
             An advance case to pass, three targets
             One of the target strings in the middle of the corpus, another overlapping, and the other at the end of the corpus 
         '''
-
+        print("\n Test test_advance")
         string_target = ['one two', 'two three', 'fourteen fifteen']
         corpus = 'one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen'
         corpus = corpus.split()
@@ -110,7 +110,7 @@ class TestStatement(unittest.TestCase):
             A base case to fail, target strings being at the beginning of the corpus 
             'five' comes immediately after 'three' in string_target, skipping 'four'
         '''
-
+        print("\n Test test_fail")
         string_target = ['one two', 'three five']
         counterListTarget = [1,1]
         corpus = 'one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen'
