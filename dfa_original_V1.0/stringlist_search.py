@@ -93,17 +93,10 @@ def stateCal(s):
         result += (s[i] << 8 * i)
     return result
 
-
-# TODO: a reverse version of stateCal() to transform a number back to a state tuple.
-
 accept = tuple([255] * len(strings_present))
 accept = stateCal(accept)
 zero_state = tuple([0] * len(strings_present))
 zero_state = stateCal(zero_state)
-
-
-# TODO: actual_counter = [0,0,0,...]
-# TODO: expected_counter = [1,2,3,...]
 
 def run_dfa(dfa, string):
     def next_state_fun(word, state):
@@ -116,10 +109,7 @@ def run_dfa(dfa, string):
             output = mux((state == dfa_state) & (word == dfa_word),
                          next_state,
                          output)  # output here is a number, not a tuple
-            # TODO: check if output has any accept state for a single string: need to use the reverse version of
-            #  stateCal()
-            # TODO: if any accept state, actual_counter[index]++ and change the state back to 0
-        output = mux(state == accept, accept, output)  # TODO: this line might need to be changed for the counter.
+        output = mux(state == accept, accept, output)  
 
         return output
 
@@ -146,3 +136,4 @@ print(outputs)
 
 # output = functools.reduce(lambda a, b: a & b, outputs)
 print_emp(outputs, 'miniwizpl_test.cpp')
+
