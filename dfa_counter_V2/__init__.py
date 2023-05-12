@@ -83,7 +83,7 @@ def main(target_dir, prime, prime_name, size, operation):
         print("DFA successfully reached the accept state \n")
         
     print("Generating Output \n")
-    # print_ir0(target_dir + "/" + f"{file_name}_{prime_name}_{size}")
+    print_ir0(target_dir + "/" + f"{file_name}_{prime_name}_{size}")
 
 
 if __name__ == '__main__':
