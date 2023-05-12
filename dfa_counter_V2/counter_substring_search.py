@@ -80,7 +80,7 @@ def run_dfa(dfa: dict, document, zeroState):
         # return curr_state since we are using reduce() for the loop
         return curr_state
 
-    reduce(next_state_fun, document, zeroState)
+    reduce(next_state_fun, document)
     return counterList
 
 
