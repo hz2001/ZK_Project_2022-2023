@@ -1,6 +1,7 @@
 # Author: Herbert Zhang
 # This file contains everything that we need to build the dfa with counter.
 
+from .util import *
 
 def stateCal(s: tuple) -> int:
     """
@@ -20,6 +21,12 @@ def stateCal(s: tuple) -> int:
 def toWordSet(stringlist: list) -> set:
     """ Helper function to convert the given stringlist to a set of words"""
     return set(' '.join(stringlist).split())
+
+def toNumberSet(wordset: set) -> set:
+    newset = set()
+    for i in wordset:
+        newset.add(word_to_integer())
+    return newset
 
 def defaultState(stringlist: list) -> tuple:
     """
@@ -53,6 +60,8 @@ def validDFA(dfa:dict, queue: set, stringlist: list = None, wordset: set = None)
             wordset = toWordSet(stringlist)
         except:
             raise KeyError("must give wordset:set or stringlist:list for reference")
+        
+    wordset = toNumberSet(wordset)
     # print("\t dfa:",dfa)
     # print("\t wordset:",wordset)
     
