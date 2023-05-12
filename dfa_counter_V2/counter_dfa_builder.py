@@ -2,6 +2,21 @@
 # This file contains everything that we need to build the dfa with counter.
 
 
+def stateCal(s: tuple) -> int:
+    """
+    Takes in a state (in tuple format) and return a unique hash of that word in integer 
+
+    Args:
+        s (tuple): A state in the DFA, e.g. (0,1,0)
+
+    Returns:
+        int: a unique integer representation of that state
+    """
+    result = 0
+    for i in range(len(s)):
+        result += (s[i] << 8 * i)
+    return result
+
 def toWordSet(stringlist: list) -> set:
     """ Helper function to convert the given stringlist to a set of words"""
     return set(' '.join(stringlist).split())
@@ -29,17 +44,17 @@ def validDFA(dfa:dict, queue: set, stringlist: list = None, wordset: set = None)
     Returns:
         bool: True/False
     """
-    print(f"\n calling function validDFA(), queue: {queue}")
+    # print(f"\n calling function validDFA(), queue: {queue}")
     states = set([i[0] for i in dfa.keys()]+[i[1] for i in dfa.items()]) # TODO: fix this 
     # process if get a stringlist, else use wordset
     if wordset is None:
         try:
-            print("stringlist:",stringlist)
+            # print("stringlist:",stringlist)
             wordset = toWordSet(stringlist)
         except:
             raise KeyError("must give wordset:set or stringlist:list for reference")
-    print("\t dfa:",dfa)
-    print("\t wordset:",wordset)
+    # print("\t dfa:",dfa)
+    # print("\t wordset:",wordset)
     
     class Graph:
         # Constructor
@@ -101,7 +116,7 @@ def validDFA(dfa:dict, queue: set, stringlist: list = None, wordset: set = None)
 def assign(dfa: dict, stringlist: list, state_to_implement:tuple, word:str, counterDict:dict):
     """ assign one word to its next state
     """
-    print("calling function assign()")
+    # print("calling function assign()")
 
     if (state_to_implement, word) in dfa:
         return
@@ -132,7 +147,7 @@ def assign(dfa: dict, stringlist: list, state_to_implement:tuple, word:str, coun
             nextState[index] = 1
     dfa[tuple(state_to_implement), word] = tuple(nextState)
     counterDict[tuple(state_to_implement), word] = counterList
-    print(f"\t ({state_to_implement}, {word}) -> nextState: {nextState}, counterList: {counterList} \n")
+    # print(f"\t ({state_to_implement}, {word}) -> nextState: {nextState}, counterList: {counterList} \n")
 
 def eliminateRedundency(dfa: dict, counterDict: dict, stringlist: list) -> tuple:
     """
@@ -150,7 +165,7 @@ def eliminateRedundency(dfa: dict, counterDict: dict, stringlist: list) -> tuple
             del newdfa[key]
             del newCounterDict[key]
     
-    
+    print(f"DFA: {newdfa}, counterDict: {counterDict}")
     return (newdfa, newCounterDict)
 
 def dfa_from_string_full(stringlist: list[str]) -> tuple[dict, dict]:

@@ -1,5 +1,5 @@
 # sys.path.append("/usr/src/app/examples/substring_search/common")
-from common import util 
+from .util import *
 import sys
 from .counter_dfa_builder import *
 from .counter_substring_search import *

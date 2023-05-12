@@ -3,23 +3,8 @@
 from miniwizpl import *
 from miniwizpl.expr import *
 from functools import reduce
+from .counter_dfa_builder import stateCal
 
-
-
-def stateCal(s: tuple) -> int:
-    """
-    Takes in a state (in tuple format) and return a unique hash of that word in integer 
-
-    Args:
-        s (tuple): A state in the DFA, e.g. (0,1,0)
-
-    Returns:
-        int: a unique integer representation of that state
-    """
-    result = 0
-    for i in range(len(s)):
-        result += (s[i] << 8 * i)
-    return result
 
 def incrementCounterList(state: tuple) -> None:
     """

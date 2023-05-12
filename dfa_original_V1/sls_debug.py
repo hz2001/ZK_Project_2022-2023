@@ -2,6 +2,7 @@ import sys
 from miniwizpl import *
 from miniwizpl.expr import *
 
+# this path is the absolute path in the docker container
 sys.path.append("/usr/src/app/examples/substring_search/common")
 from util import *
 
