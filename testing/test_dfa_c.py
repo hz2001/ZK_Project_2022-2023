@@ -25,16 +25,15 @@ class TestStatement(unittest.TestCase):
         corpus = corpus.split()
         file_string = SecretList([util.word_to_integer(_str) for _str in corpus])
 
-        accept_state = 255
-        accept = tuple([255] * len(string_target))
-        accept = statement.stateCal(accept)
         zero_state = tuple([0] * len(string_target))
         zero_state = statement.stateCal(zero_state)
 
-        dfa = statement.dfa_from_string(string_target, accept_state)
-        latest_state = statement.run_dfa(dfa, file_string, zero_state, accept)
-        self.assertEqual(val_of(latest_state), accept)
-        self.assertNotEqual(val_of(latest_state), zero_state)
+        dfa = statement.dfa_from_string(string_target)
+        counterList = statement.run_dfa(dfa=dfa, document=file_string, zeroState=zero_state)
+
+        counterListTarget = [1,1]
+        for i in range(len(counterListTarget)):
+            self.assertGreaterEqual(counterList[i],counterListTarget[i])
 
     def test_intermediate(self):
 
@@ -48,16 +47,15 @@ class TestStatement(unittest.TestCase):
         corpus = corpus.split()
         file_string = SecretList([util.word_to_integer(_str) for _str in corpus])
 
-        accept_state = 255
-        accept = tuple([255] * len(string_target))
-        accept = statement.stateCal(accept)
         zero_state = tuple([0] * len(string_target))
         zero_state = statement.stateCal(zero_state)
 
-        dfa = statement.dfa_from_string(string_target, accept_state)
-        latest_state = statement.run_dfa(dfa, file_string, zero_state, accept)
-        self.assertEqual(val_of(latest_state), accept)
-        self.assertNotEqual(val_of(latest_state), zero_state)
+        dfa = statement.dfa_from_string(string_target)
+        counterList = statement.run_dfa(dfa=dfa, document=file_string, zeroState=zero_state)
+
+        counterListTarget = [1,1]
+        for i in range(len(counterListTarget)):
+            self.assertGreaterEqual(counterList[i],counterListTarget[i])
 
 
     def test_intermediate2(self):
@@ -71,16 +69,15 @@ class TestStatement(unittest.TestCase):
         corpus = corpus.split()
         file_string = SecretList([util.word_to_integer(_str) for _str in corpus])
 
-        accept_state = 255
-        accept = tuple([255] * len(string_target))
-        accept = statement.stateCal(accept)
         zero_state = tuple([0] * len(string_target))
         zero_state = statement.stateCal(zero_state)
 
-        dfa = statement.dfa_from_string(string_target, accept_state)
-        latest_state = statement.run_dfa(dfa, file_string, zero_state, accept)
-        self.assertEqual(val_of(latest_state), accept)
-        self.assertNotEqual(val_of(latest_state), zero_state)
+        dfa = statement.dfa_from_string(string_target)
+        counterList = statement.run_dfa(dfa=dfa, document=file_string, zeroState=zero_state)
+
+        counterListTarget = [1,1]
+        for i in range(len(counterListTarget)):
+            self.assertGreaterEqual(counterList[i],counterListTarget[i])
 
 
     def test_advance(self):
@@ -95,16 +92,16 @@ class TestStatement(unittest.TestCase):
         corpus = corpus.split()
         file_string = SecretList([util.word_to_integer(_str) for _str in corpus])
 
-        accept_state = 255
-        accept = tuple([255] * len(string_target))
-        accept = statement.stateCal(accept)
         zero_state = tuple([0] * len(string_target))
         zero_state = statement.stateCal(zero_state)
+        
+        dfa = statement.dfa_from_string(string_target)
+        counterList = statement.run_dfa(dfa=dfa, document=file_string, zeroState=zero_state)
 
-        dfa = statement.dfa_from_string(string_target, accept_state)
-        latest_state = statement.run_dfa(dfa, file_string, zero_state, accept)
-        self.assertEqual(val_of(latest_state), accept)
-        self.assertNotEqual(val_of(latest_state), zero_state)
+        counterListTarget = [1,1,1]
+        # the test is successful if all states in counterList is greater than the target list
+        for i in range(len(counterListTarget)):
+            self.assertGreaterEqual(counterList[i],counterListTarget[i])
 
 
     def test_fail(self):
@@ -115,21 +112,20 @@ class TestStatement(unittest.TestCase):
         '''
 
         string_target = ['one two', 'three five']
+        counterListTarget = [1,1]
         corpus = 'one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen'
         corpus = corpus.split()
         file_string = SecretList([util.word_to_integer(_str) for _str in corpus])
 
-        accept_state = 255
-        accept = tuple([255] * len(string_target))
-        accept = statement.stateCal(accept)
-        zero_state = tuple([0] * len(string_target))
+        zero_state = statement.defaultState()
         zero_state = statement.stateCal(zero_state)
 
-        dfa = statement.dfa_from_string(string_target, accept_state)
-        latest_state = statement.run_dfa(dfa, file_string, zero_state, accept)
-        self.assertEqual(val_of(latest_state), zero_state)
-        self.assertNotEqual(val_of(latest_state), accept)
-
+        dfa = statement.dfa_from_string(string_target)
+        counterList = statement.run_dfa(dfa=dfa, document=file_string, zeroState=zero_state)
+        
+        # the test is successful if not all state in counterList is greater than the target list
+        for i in range(len(counterListTarget)):
+            self.assertLess(counterList[i],counterListTarget[i])
 
 if __name__ == '__main__':
     unittest.main()
