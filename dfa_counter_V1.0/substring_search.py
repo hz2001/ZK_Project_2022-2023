@@ -45,7 +45,8 @@ def parse_list(lst):
             except:
                 print("detected a non integer element in the list")
             if word not in alphabet:
-                alphabet[word] = [1, []]  # (state number, how many presented, what words follows it)
+                # TODO: change the structure of the alphabet to [counter, [next states], [current_state]]
+                alphabet[word] = [1, [], []]  # (state number, how many presented, what words follows it)
             else:
                 alphabet[word][0] += 1
             if previous is not None:
@@ -54,7 +55,7 @@ def parse_list(lst):
             previous = word
     # the above code assumes that string "else" is not in our input document,
     # and we will replace all words which are not in our list to "else" keyword.
-    alphabet[word_to_integer('else')] = [1, []]
+    alphabet[word_to_integer('else')] = [1, [], []]
     # if an accept state is achieved, then one string in the list is found
     accept_states = {int(words.split(" ")[-1]): True for words in lst}
     # check if any words in the accept states has following word in alphabet, if so, this means that this word serves as
