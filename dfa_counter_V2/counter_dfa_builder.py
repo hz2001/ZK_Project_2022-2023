@@ -25,7 +25,7 @@ def toWordSet(stringlist: list) -> set:
 def toNumberSet(wordset: set) -> set:
     newset = set()
     for i in wordset:
-        newset.add(word_to_integer())
+        newset.add(word_to_integer(i))
     return newset
 
 def defaultState(stringlist: list) -> tuple:
