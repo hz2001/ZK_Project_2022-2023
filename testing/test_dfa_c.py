@@ -128,5 +128,6 @@ class TestStatement(unittest.TestCase):
             self.assertLess(counterList[i],counterListTarget[i])
 
 if __name__ == '__main__':
+    print("\n Starting Test")
     unittest.main()
 
