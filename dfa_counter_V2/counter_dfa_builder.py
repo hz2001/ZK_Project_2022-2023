@@ -18,15 +18,38 @@ def stateCal(s: tuple) -> int:
         result += (s[i] << 8 * i)
     return result
 
+def word_to_integer_string(word_to_convert: str) -> str:
+    """ The same functionlity as word_to_integer, except that we express the integer as type string"""
+    return str(word_to_integer(word_to_convert))
+
 def toWordSet(stringlist: list) -> set:
-    """ Helper function to convert the given stringlist to a set of words"""
+    """ Helper function to convert the given stringlist to a set of words."""
     return set(' '.join(stringlist).split())
 
-def toNumberSet(wordset: set) -> set:
-    newset = set()
+def toNumberSet(stringlist: list) -> set:
+    """ Helper function to conver the given stringlist to a set of numbers (converted from words) in string format. 
+    Currently not used"""
+    wordset = toWordSet(stringlist)
+    numberList = set()
     for i in wordset:
-        newset.add(word_to_integer(i))
-    return newset
+        numberList.add(word_to_integer(i))
+    return numberList
+
+def toNumberStringList(stringlist: list) -> list:
+    """ Convert the given stringlist to numical format
+    Examples:
+    ['import socket', 'import numpy'] -> ['123 456','123 789'] 
+    Where '123', '456', '789' varies when algorithm changes"""
+    return [(lambda x: ' '.join(list(map(word_to_integer_string, x.split(' ')))))(i) for i in stringlist ]
+
+def toNumricalDFA(dfa: dict, counterDict: dict) -> dict:
+    """ This function will convert a dfa into numical for miniwizpl to run."""
+    numericDFA = {}
+    numericCounterDict = {}
+    for ((state, word), nextState) in dfa.items():
+        numericDFA[(state, int(word))] = nextState
+        numericCounterDict[(state, int(word))] = counterDict[(state, word)]
+    return (numericDFA, numericCounterDict)
 
 def defaultState(stringlist: list) -> tuple:
     """
@@ -61,7 +84,6 @@ def validDFA(dfa:dict, queue: set, stringlist: list = None, wordset: set = None)
         except:
             raise KeyError("must give wordset:set or stringlist:list for reference")
         
-    wordset = toNumberSet(wordset)
     # print("\t dfa:",dfa)
     # print("\t wordset:",wordset)
     
@@ -125,7 +147,7 @@ def validDFA(dfa:dict, queue: set, stringlist: list = None, wordset: set = None)
 def assign(dfa: dict, stringlist: list, state_to_implement:tuple, word:str, counterDict:dict):
     """ assign one word to its next state
     """
-    # print("calling function assign()")
+    print("calling function assign()")
 
     if (state_to_implement, word) in dfa:
         return
@@ -156,7 +178,7 @@ def assign(dfa: dict, stringlist: list, state_to_implement:tuple, word:str, coun
             nextState[index] = 1
     dfa[tuple(state_to_implement), word] = tuple(nextState)
     counterDict[tuple(state_to_implement), word] = counterList
-    # print(f"\t ({state_to_implement}, {word}) -> nextState: {nextState}, counterList: {counterList} \n")
+    print(f"\t ({state_to_implement}, {word}) -> nextState: {nextState}, counterList: {counterList} \n")
 
 def eliminateRedundency(dfa: dict, counterDict: dict, stringlist: list) -> tuple:
     """
@@ -188,7 +210,10 @@ def dfa_from_string_full(stringlist: list[str]) -> tuple[dict, dict]:
     Returns:
         tuple[dict, list]
     """
+    
     wordset: set = toWordSet(stringlist)
+    # print(stringlist)
+    # print(wordset)
     queue = set()
     dfa = {}
     counterDict = {}
@@ -206,7 +231,7 @@ def dfa_from_string_full(stringlist: list[str]) -> tuple[dict, dict]:
     
     return (dfa, counterDict)
 
-def dfa_from_string(stringlist: list[str]) -> tuple[dict, dict]:
+def dfa_from_string(stringlist: list[str], test = False) -> tuple[dict, dict]:
     """
             This function builds the dfa from a list of strings, the same logic with dfa_from_string_full,
         except it would eliminate redunency of the DFA & counterDict.
@@ -218,5 +243,14 @@ def dfa_from_string(stringlist: list[str]) -> tuple[dict, dict]:
     Returns:
         tuple[dict, list]
     """
-    (dfa, counterDict) = dfa_from_string_full(stringlist = stringlist)
-    return eliminateRedundency(dfa, counterDict, stringlist)
+    if test:
+        # If test is specified, we are using the actual words instead of the numbers,
+        # which allows miniwizpl to process.
+        (dfa, counterDict) = dfa_from_string_full(stringlist = stringlist)
+        (dfa, counterDict) = eliminateRedundency(dfa, counterDict, stringlist)
+    else:
+        stringlist = toNumberStringList(stringlist)
+        (dfa, counterDict) = dfa_from_string_full(stringlist = stringlist)
+        (dfa, counterDict) = eliminateRedundency(dfa, counterDict, stringlist)
+        (dfa, counterDict) = toNumricalDFA(dfa, counterDict)
+    return (dfa, counterDict)

@@ -76,10 +76,8 @@ def main(target_dir, prime, prime_name, size, operation):
     
     # claim a return_state so that we don't have to change the test file.
     if False in assertions:
-        return_state = tuple([255]*len(stringList))
         print("DFA did not reached the accept state \n")
     else:
-        return_state = zero_state
         print("DFA successfully reached the accept state \n")
         
     print("Generating Output \n")
