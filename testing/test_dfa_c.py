@@ -27,8 +27,9 @@ class TestStatement(unittest.TestCase):
 
         zero_state = tuple([0] * len(string_target))
         zero_state = statement.stateCal(zero_state)
-
-        dfa = statement.dfa_from_string(string_target)
+        global counterDict
+        (dfa, counter_dict) = statement.dfa_from_string(string_target)
+        counterDict = counter_dict
         counterList = statement.run_dfa(dfa=dfa, document=file_string, zeroState=zero_state)
 
         counterListTarget = [1,1]
@@ -50,7 +51,9 @@ class TestStatement(unittest.TestCase):
         zero_state = tuple([0] * len(string_target))
         zero_state = statement.stateCal(zero_state)
 
-        dfa = statement.dfa_from_string(string_target)
+        global counterDict
+        (dfa, counter_dict) = statement.dfa_from_string(string_target)
+        counterDict = counter_dict
         counterList = statement.run_dfa(dfa=dfa, document=file_string, zeroState=zero_state)
 
         counterListTarget = [1,1]
@@ -72,7 +75,9 @@ class TestStatement(unittest.TestCase):
         zero_state = tuple([0] * len(string_target))
         zero_state = statement.stateCal(zero_state)
 
-        dfa = statement.dfa_from_string(string_target)
+        global counterDict
+        (dfa, counter_dict) = statement.dfa_from_string(string_target)
+        counterDict = counter_dict
         counterList = statement.run_dfa(dfa=dfa, document=file_string, zeroState=zero_state)
 
         counterListTarget = [1,1]
@@ -95,7 +100,9 @@ class TestStatement(unittest.TestCase):
         zero_state = tuple([0] * len(string_target))
         zero_state = statement.stateCal(zero_state)
         
-        dfa = statement.dfa_from_string(string_target)
+        global counterDict
+        (dfa, counter_dict) = statement.dfa_from_string(string_target)
+        counterDict = counter_dict
         counterList = statement.run_dfa(dfa=dfa, document=file_string, zeroState=zero_state)
 
         counterListTarget = [1,1,1]
@@ -117,10 +124,12 @@ class TestStatement(unittest.TestCase):
         corpus = corpus.split()
         file_string = SecretList([util.word_to_integer(_str) for _str in corpus])
 
-        zero_state = statement.defaultState()
+        zero_state = statement.defaultState(string_target)
         zero_state = statement.stateCal(zero_state)
 
-        dfa = statement.dfa_from_string(string_target)
+        global counterDict
+        (dfa, counter_dict) = statement.dfa_from_string(string_target)
+        counterDict = counter_dict
         counterList = statement.run_dfa(dfa=dfa, document=file_string, zeroState=zero_state)
         
         # the test is successful if not all state in counterList is greater than the target list

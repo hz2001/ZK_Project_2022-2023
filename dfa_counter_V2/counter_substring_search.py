@@ -4,7 +4,7 @@ from miniwizpl import *
 from miniwizpl.expr import *
 # from functools import reduce # we are not using reduce from functools, seems that we are using the one from miniwizpl
 from .counter_dfa_builder import stateCal
-
+from dfa_counter_V2 import *
 
 def incrementCounterList(state: tuple) -> None:
     """
@@ -65,14 +65,14 @@ def run_dfa(dfa: dict, document, zeroState):
         # return curr_state since we are using reduce() for the loop
         return curr_state
 
-    try:
-        itor1 = iter(document)
-    except TypeError as te:
-        print("document", 'is not iterable')
-    try:
-        itor2 = iter(zeroState)
-    except TypeError as te:
-        print("zeroState", 'is not iterable')
+    # try:
+    #     itor1 = iter(document)
+    # except TypeError as te:
+    #     print("document", 'is not iterable')
+    # try:
+    #     itor2 = iter(zeroState)
+    # except TypeError as te:
+    #     print("zeroState", 'is not iterable')
 
     reduce(next_state_fun, document, zeroState)
     return counterList
