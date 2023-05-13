@@ -58,10 +58,10 @@ def validDFA(dfa:dict, queue: set, stringlist: list = None, wordset: set = None)
         try:
             # print("stringlist:",stringlist)
             wordset = toWordSet(stringlist)
+            wordset = toNumberSet(wordset)
         except:
             raise KeyError("must give wordset:set or stringlist:list for reference")
         
-    wordset = toNumberSet(wordset)
     # print("\t dfa:",dfa)
     # print("\t wordset:",wordset)
     
@@ -115,7 +115,7 @@ def validDFA(dfa:dict, queue: set, stringlist: list = None, wordset: set = None)
                         # visited[initialState] = False # will add new items to visited
                         pass
 
-        # print(f"\t initial state: {initialState}, visited: {visited} " )
+        print(f"\t initial state: {initialState}, visited: {visited} " )
         for state in visited:
             if not visited[state]:
                 queue.add(state) # 0,1
@@ -188,7 +188,7 @@ def dfa_from_string_full(stringlist: list[str]) -> tuple[dict, dict]:
     Returns:
         tuple[dict, list]
     """
-    wordset: set = toWordSet(stringlist)
+    wordset: set = toNumberSet(toWordSet(stringlist))
     queue = set()
     dfa = {}
     counterDict = {}
