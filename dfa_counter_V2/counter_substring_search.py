@@ -2,7 +2,7 @@
 
 from miniwizpl import *
 from miniwizpl.expr import *
-from functools import reduce
+# from functools import reduce # we are not using reduce from functools, seems that we are using the one from miniwizpl
 from .counter_dfa_builder import stateCal
 
 
@@ -30,14 +30,14 @@ def run_dfa(dfa: dict, document, zeroState):
     Args:
         dfa (dict): The DFA dictionary.
         document (str): string-like, the target document as plain text.
-        zeroState (tuple): The default state of the DFA.
-    """
+        zeroState (tuple): The default state of the DFA. """
     def next_state_fun(word, initial_state):
         '''
             I changed this part, otherwise when two sub texts are not contonious,
             the DFA never moves from the zero state
         '''
-        curr_state = initial_state
+        # go to zeroState always, unless we have the next state in the DFA
+        curr_state = zeroState
 
         for (dfa_state, dfa_word), next_state in dfa.items():
             print(
@@ -47,7 +47,7 @@ def run_dfa(dfa: dict, document, zeroState):
                 "dfa string: ", dfa_word,"\n",
                 "next_state", next_state,"\n")
             # transform all tuples to numbers
-            dfa_state = stateCal(dfa_state)
+            dfa_state = stateCal(dfa_state) # TODO: Ask if I can do stateCal to the dfa before the run dfa, since I might have to use (dfa_state, dfa_word) for the counter increment as well. see line 60
             next_state = stateCal(next_state)
             
             curr_state = mux((initial_state == dfa_state) & (word == dfa_word),
@@ -57,7 +57,7 @@ def run_dfa(dfa: dict, document, zeroState):
             # this will also allow us to use the latest tuple for counter
             break 
         
-        incrementCounterList(state = (dfa_state, dfa_word))
+        incrementCounterList(state = (dfa_state, dfa_word)) # TODO: Problematic, now the dfa_state and dfa_word are calculated to be int, but the dict is still using tuples.
         global counterList
         print(f"coutnerList = {counterList}") # TODO: Does counterList have to be secret as well??
         
