@@ -2,7 +2,7 @@
 # This file contains everything that we need to build the dfa with counter.
 
 from .util import *
-import global_vars
+from .global_vars import counterDict
 
 
 def stateCal(s: tuple) -> int:
@@ -57,7 +57,7 @@ def toNumberStringList(stringlist: list) -> list:
     ]
 
 
-def toNumricalDFA(dfa: dict, counterDict: dict) -> dict:
+def toNumricalDFA(dfa: dict, counterDict: dict) -> tuple[dict, dict]:
     """This function converts the word in DFA key into 
     integer for miniwizpl to run."""
     numericDFA = {}
@@ -219,7 +219,7 @@ def assign(
     # print(f"\t ({state_to_implement}, {word}) -> nextState: {nextState}, counterList: {counterList} \n")
 
 
-def eliminateRedundency(dfa: dict, counterDict: dict, stringlist: list) -> tuple:
+def eliminateRedundency(dfa: dict, counterDict: dict, stringlist: list) -> tuple[dict, dict]:
     """
         This function should be called after the whole dfa has been made and validated.
         This function will return a copy to the given dfa, which have all the redundent
@@ -297,13 +297,14 @@ def dfa_from_string(stringlist: list[str], test=False) -> dict:
     if test:
         # If test is specified, we are using the actual words instead of the numbers,
         # which allows miniwizpl to process.
-        (dfa, counterDict) = __dfa_from_string_full(stringlist=stringlist)
-        (dfa, counterDict) = eliminateRedundency(dfa, counterDict, stringlist)
+        (dfa, counter_dict) = __dfa_from_string_full(stringlist=stringlist)
+        (dfa, counter_dict) = eliminateRedundency(dfa, counter_dict, stringlist)
     else:
         stringlist = toNumberStringList(stringlist)
-        (dfa, counterDict) = __dfa_from_string_full(stringlist=stringlist)
-        (dfa, counterDict) = eliminateRedundency(dfa, counterDict, stringlist)
-        (dfa, counterDict) = toNumricalDFA(dfa, counterDict)
-
-    global_vars.counterDict = counterDict
+        (dfa, counter_dict) = __dfa_from_string_full(stringlist=stringlist)
+        (dfa, counter_dict) = eliminateRedundency(dfa, counter_dict, stringlist)
+        (dfa, counter_dict) = toNumricalDFA(dfa, counter_dict)
+        
+    global counterDict
+    counterDict = counter_dict
     return dfa  # since we updated the global variable counterDict in the line before, returning two values is not necessary.
