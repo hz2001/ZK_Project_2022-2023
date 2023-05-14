@@ -2,8 +2,6 @@
 # This file contains everything that we need to build the dfa with counter.
 
 from .util import *
-from .global_vars import counterDict, counterList
-
 
 def stateCal(s: tuple) -> int:
     """
@@ -306,8 +304,9 @@ def dfa_from_string(stringlist: list[str], test=False) -> dict:
         (dfa, counter_dict) = eliminateRedundency(dfa, counter_dict, stringlist)
         (dfa, counter_dict) = toNumricalDFA(dfa, counter_dict)
         
-    global counterDict
+    global counterDict # init counterDict and counterList as global vars. According to tests, these variables cannot be declared outside, otherwise they will be in different memory address when reassigned with new values.
     counterDict = counter_dict
     global counterList
     counterList = [0 for i in range(len(stringlist))]
+    print(f"counterDict: {counterDict, id(counterDict)}, counterList: {counterList, id(counterList)}")
     return dfa  # since we updated the global variable counterDict in the line before, returning two values is not necessary.

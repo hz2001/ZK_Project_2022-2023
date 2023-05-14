@@ -3,9 +3,7 @@
 from miniwizpl import *
 from miniwizpl.expr import *
 # from functools import reduce # we are not using reduce from functools, seems that we are using the one from miniwizpl
-from .counter_dfa_builder import stateCal
-from .global_vars import counterDict, counterList
-
+from .counter_dfa_builder import *
 
 def incrementCounterList(state: tuple) -> None:
     """
@@ -18,8 +16,9 @@ def incrementCounterList(state: tuple) -> None:
     global counterList
     if state in counterDict:
         toIncrement = counterDict[state]
-        counterList = [toIncrement[i] + counterList[i]
-                                   for i in range(len(counterList))]
+        for i in range(len(counterList)):
+            counterList[i] += toIncrement[i]
+        print(f"Updating counterList: {counterList}")
     return 
 
 
@@ -71,21 +70,8 @@ def run_dfa(dfa: dict, document, zeroState):
         # return curr_state since we are using reduce() for the loop
         return curr_state
 
-    # try:
-    #     itor1 = iter(document)
-    # except TypeError as te:
-    #     print("document", 'is not iterable')
-    # try:
-    #     itor2 = iter(zeroState)
-    # except TypeError as te:
-    #     print("zeroState", 'is not iterable')
-
     reduce(next_state_fun, document, zeroState)
-
-    global counterList
-    global counterDict
+    
     # cleanup
     counterList = counterList.copy()
-    counterDict = {}  # clear the output for the global counterDict
-    counterList = []  # clear the output for the global counterList
     return counterList
