@@ -1,5 +1,4 @@
 import sys
-from .counter_dfa_builder import *
 from .counter_substring_search import *
 from miniwizpl import *
 from miniwizpl.expr import *
