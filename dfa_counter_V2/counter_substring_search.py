@@ -4,7 +4,7 @@ from miniwizpl import *
 from miniwizpl.expr import *
 # from functools import reduce # we are not using reduce from functools, seems that we are using the one from miniwizpl
 from .counter_dfa_builder import stateCal
-import global_vars
+from .global_vars import counterDict, counterList
 
 
 def incrementCounterList(state: tuple) -> None:
@@ -14,12 +14,13 @@ def incrementCounterList(state: tuple) -> None:
     Args:
         state (tuple): a state within the dfa, with format tuple(tuple, word)
     """
-
-    if state in global_vars.counterDict:
-        toIncrement = global_vars.counterDict[state]
-        global_vars.counterList = [toIncrement[i] + global_vars.counterList[i]
-                                   for i in range(len(global_vars.counterList))]
-    return
+    global counterDict
+    global counterList
+    if state in counterDict:
+        toIncrement = counterDict[state]
+        counterList = [toIncrement[i] + counterList[i]
+                                   for i in range(len(counterList))]
+    return 
 
 
 def run_dfa(dfa: dict, document, zeroState):
@@ -81,8 +82,10 @@ def run_dfa(dfa: dict, document, zeroState):
 
     reduce(next_state_fun, document, zeroState)
 
+    global counterList
+    global counterDict
     # cleanup
-    counterList = global_vars.counterList.copy()
-    global_vars.counterDict = {}  # clear the output for the global counterDict
-    global_vars.counterList = []  # clear the output for the global counterList
+    counterList = counterList.copy()
+    counterDict = {}  # clear the output for the global counterDict
+    counterList = []  # clear the output for the global counterList
     return counterList
