@@ -366,12 +366,21 @@ def run_dfa(dfa: dict, document, zeroState):
                 "next_state", next_state, "\n")
             # transform all tuples to numbers
             # TODO: Ask if I can do stateCal to the dfa before the run dfa, since I might have to use (dfa_state, dfa_word) for the counter increment as well. see line 60
-            dfa_state = stateCal(dfa_state)
-            next_state = stateCal(next_state)
-
-            curr_state = mux((initial_state == dfa_state) & (word == dfa_word),
+            # dfa_state = stateCal(dfa_state) 
+            # next_state = stateCal(next_state)
+            
+            # curr_state = mux((initial_state == dfa_state) & (word == dfa_word),
+            #                  next_state,
+            #                  curr_state)
+            
+            
+            # TODO: Ask if I can use other variables to store the values of dfa_state and next_state after the stateCal. shown below:
+            stateCal_state = stateCal(dfa_state) 
+            stateCal_next = stateCal(next_state)
+            curr_state = mux((initial_state == stateCal_state) & (word == stateCal_next),
                              next_state,
                              curr_state)
+            
             # Break out of the loop when finding the correct state & word,
             # this will also allow us to use the latest tuple for counter
             break
