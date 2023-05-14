@@ -360,28 +360,20 @@ def run_dfa(dfa: dict, document, zeroState):
         # go to zeroState always, unless we have the next state in the DFA
         curr_state = zeroState 
         for (dfa_state, dfa_word), next_state in dfa.items():
-            print(
-                "curr state: ", val_of(curr_state),"\n",
-                "dfa state: ", dfa_state, "\n", initial_state == stateCal(dfa_state),
-                "input string: ", val_of(word),
-                "dfa string: ", dfa_word, "\n",val_of(word) == dfa_word ,
-                "next_state", next_state)
+            #print(
+                # "curr state: ", val_of(curr_state),"\n",
+                # "dfa state: ", dfa_state, "\n", initial_state == stateCal(dfa_state),
+                # "input string: ", val_of(word),
+                # "dfa string: ", dfa_word, "\n",val_of(word) == dfa_word ,
+                # "next_state", next_state)
+            
             # transform all tuples to numbers
-            # TODO: Ask if I can do stateCal to the dfa before the run dfa, since I might have to use (dfa_state, dfa_word) for the counter increment as well. see line 60
-            # dfa_state = stateCal(dfa_state) 
-            # next_state = stateCal(next_state)
-            
-            # curr_state = mux((initial_state == dfa_state) & (word == dfa_word),
-            #                  next_state,
-            #                  curr_state)
-            length = len(dfa_state)
-            
-            # TODO: Ask if I can use other variables to store the values of dfa_state and next_state after the stateCal. shown below:
             stateCal_state = stateCal(dfa_state) 
             stateCal_next = stateCal(next_state)
             curr_state = mux((initial_state == stateCal_state) & (word == dfa_word),
                              stateCal_next,
                              curr_state)
+            # unused, we should not reveal the value of the multiplexer
             # question = mux((initial_state == stateCal_state) & (word == dfa_word),
             #                  #stateCal_next,
             #                  True,
@@ -391,31 +383,25 @@ def run_dfa(dfa: dict, document, zeroState):
             
             global counterList
             global counterDict
+            length = len(dfa_state)
             vec = [counterList[i] + counterDict[(dfa_state,dfa_word)][i] for i in range(length)] # !!! counterList must be hidden, ask if we can add Secret list to a public list.
                 
             counterList = mux((initial_state == stateCal_state) & (word == dfa_word),
                               vec,
                               counterList)
 
-            # Break out of the loop when finding the correct state & word,
-            # this will also allow us to use the latest tuple for counter
-            # UPDATE: could not use break here, because cannot specify a reference boolean.
-            # br = mux((initial_state == stateCal_state) & (word == dfa_word), True, False)
-        print(f"initial state: {val_of(initial_state)}, curr_state: {val_of(curr_state)}, word: {val_of(word)}")
-        print(f"dfa_state: {dfa_state}, stateCal_state: {stateCal_state}, next state: {next_state}")
-        # TODO: Problematic, now the dfa_state and dfa_word are calculated to be int, but the dict is still using tuples.
-        # incrementCounterList(state=(dfa_state, dfa_word))
-        print()
-        # print("initial state: ", val_of(initial_state), "current state: ", val_of(curr_state), "\n")
+        # print(f"initial state: {val_of(initial_state)}, curr_state: {val_of(curr_state)}, word: {val_of(word)}")
+        # print(f"dfa_state: {dfa_state}, stateCal_state: {stateCal_state}, next state: {next_state}")
+        # print()
+        
         # return curr_state since we are using reduce() for the loop
         return curr_state
 
     reduce(next_state_fun, document, zeroState)
     
     # cleanup
-    global counterList # TODO: Does counterList have to be secret as well??
+    global counterList 
     global counterDict
-    print(f"!!! getting counterDict: {counterDict, id(counterDict)}, counterList: {counterList, id(counterList)}")
-
+    
     local_counterList = counterList.copy()
     return local_counterList
