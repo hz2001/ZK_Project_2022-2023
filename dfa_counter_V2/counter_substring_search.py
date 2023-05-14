@@ -323,7 +323,8 @@ def dfa_from_string(stringlist: list[str], test=False) -> dict:
 
 def incrementCounterList(state):
     """
-    This function takes in a state, increament the counter based on the counterDict
+    This function takes in a state, increament the counter based on the counterDict.
+    Cannot be called in the mux() funciton, because it runs everytime the mux() is called.
 
     Args:
         state (tuple): a state within the dfa, with format tuple(tuple, word)
@@ -351,7 +352,7 @@ def run_dfa(dfa: dict, document, zeroState):
         document (str): string-like, the target document as plain text.
         zeroState (tuple): The default state of the DFA. """
 
-    def next_state_fun(word, initial_state):
+    def next_state_fun(word, initial_state): # TODO: initial_state could be a tuple?? try this out
         '''
             I changed this part, otherwise when two sub texts are not contonious,
             the DFA never moves from the zero state
@@ -373,22 +374,29 @@ def run_dfa(dfa: dict, document, zeroState):
             # curr_state = mux((initial_state == dfa_state) & (word == dfa_word),
             #                  next_state,
             #                  curr_state)
-            
+            length = len(dfa_state)
             
             # TODO: Ask if I can use other variables to store the values of dfa_state and next_state after the stateCal. shown below:
             stateCal_state = stateCal(dfa_state) 
             stateCal_next = stateCal(next_state)
             curr_state = mux((initial_state == stateCal_state) & (word == dfa_word),
-                             #incrementCounterList(state=(dfa_state,dfa_word) ,next_state=stateCal_next),
                              stateCal_next,
                              curr_state)
-            question = mux((initial_state == stateCal_state) & (word == dfa_word),
-                             #incrementCounterList(state=(dfa_state,dfa_word) ,next_state=stateCal_next),
-                             #stateCal_next,
-                             True,
-                             False)
-            if val_of(question):
-                incrementCounterList(state=(dfa_state,dfa_word))
+            # question = mux((initial_state == stateCal_state) & (word == dfa_word),
+            #                  #stateCal_next,
+            #                  True,
+            #                  False)
+            # if val_of(question):
+            #     incrementCounterList(state=(dfa_state,dfa_word))
+            
+            global counterList
+            global counterDict
+            vec = [counterList[i] + counterDict[(dfa_state,dfa_word)][i] for i in range(length)] # !!! counterList must be hidden, ask if we can add Secret list to a public list.
+                
+            counterList = mux((initial_state == stateCal_state) & (word == dfa_word),
+                              vec,
+                              counterList)
+
             # Break out of the loop when finding the correct state & word,
             # this will also allow us to use the latest tuple for counter
             # UPDATE: could not use break here, because cannot specify a reference boolean.
