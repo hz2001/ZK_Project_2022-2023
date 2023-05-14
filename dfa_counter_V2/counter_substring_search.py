@@ -70,6 +70,7 @@ def toNumricalDFA(dfa: dict, counterDict: dict) -> tuple[dict, dict]:
     numericCounterDict = {}
     for (state, word), nextState in dfa.items():
         numericDFA[(state, int(word))] = nextState
+    for (state, word), nextState in counterDict.items():
         numericCounterDict[(state, int(word))] = counterDict[(state, word)]
     return (numericDFA, numericCounterDict)
 
@@ -237,10 +238,9 @@ def eliminateRedundency(dfa: dict, counterDict: dict, stringlist: list) -> tuple
     newdfa = dfa.copy()
     newCounterDict = counterDict.copy()
     for key in dfa.keys():
-        if dfa[key] == defaultState(stringlist) and counterDict[key] == list(
-            defaultState(stringlist)
-        ):
+        if dfa[key] == defaultState(stringlist) and counterDict[key] == list(defaultState(stringlist)):
             del newdfa[key]
+        if counterDict[key] == list(defaultState(stringlist)):
             del newCounterDict[key]
 
     print(f"DFA: {newdfa}, counterDict: {counterDict}")
@@ -320,7 +320,7 @@ def dfa_from_string(stringlist: list[str], test=False) -> dict:
     return dfa  # since we updated the global variable counterDict in the line before, returning two values is not necessary.
 
 
-def incrementCounterList(state: tuple) -> None:
+def incrementCounterList(state):
     """
     This function takes in a state, increament the counter based on the counterDict
 
@@ -333,8 +333,9 @@ def incrementCounterList(state: tuple) -> None:
         toIncrement = counterDict[state]
         for i in range(len(counterList)):
             counterList[i] += toIncrement[i]
-        print(f"Updating counterList: {counterList}")
+        print(f"Updating counterList: {counterList}, counterDict: {counterDict[state]}")
     return 
+    # return next_state # need to return becuase used in mux()
 
 
 def run_dfa(dfa: dict, document, zeroState):
@@ -355,15 +356,14 @@ def run_dfa(dfa: dict, document, zeroState):
             the DFA never moves from the zero state
         '''
         # go to zeroState always, unless we have the next state in the DFA
-        curr_state = zeroState
-
+        curr_state = zeroState 
         for (dfa_state, dfa_word), next_state in dfa.items():
             print(
                 "curr state: ", val_of(curr_state),"\n",
-                "dfa state: ", dfa_state, "\n",
+                "dfa state: ", dfa_state, "\n", initial_state == stateCal(dfa_state),
                 "input string: ", val_of(word),
-                "dfa string: ", dfa_word, "\n",
-                "next_state", next_state, "\n")
+                "dfa string: ", dfa_word, "\n",val_of(word) == dfa_word ,
+                "next_state", next_state)
             # transform all tuples to numbers
             # TODO: Ask if I can do stateCal to the dfa before the run dfa, since I might have to use (dfa_state, dfa_word) for the counter increment as well. see line 60
             # dfa_state = stateCal(dfa_state) 
@@ -377,17 +377,26 @@ def run_dfa(dfa: dict, document, zeroState):
             # TODO: Ask if I can use other variables to store the values of dfa_state and next_state after the stateCal. shown below:
             stateCal_state = stateCal(dfa_state) 
             stateCal_next = stateCal(next_state)
-            curr_state = mux((initial_state == stateCal_state) & (word == stateCal_next),
-                             next_state,
+            curr_state = mux((initial_state == stateCal_state) & (word == dfa_word),
+                             #incrementCounterList(state=(dfa_state,dfa_word) ,next_state=stateCal_next),
+                             stateCal_next,
                              curr_state)
-            
+            question = mux((initial_state == stateCal_state) & (word == dfa_word) & (stateCal_next == zeroState),
+                             #incrementCounterList(state=(dfa_state,dfa_word) ,next_state=stateCal_next),
+                             #stateCal_next,
+                             True,
+                             False)
+            if val_of(question):
+                incrementCounterList(state=(dfa_state,dfa_word))
             # Break out of the loop when finding the correct state & word,
             # this will also allow us to use the latest tuple for counter
-            break
-
+            # UPDATE: could not use break here, because cannot specify a reference boolean.
+            # br = mux((initial_state == stateCal_state) & (word == dfa_word), True, False)
+        print(f"initial state: {val_of(initial_state)}, curr_state: {val_of(curr_state)}, word: {val_of(word)}")
+        print(f"dfa_state: {dfa_state}, stateCal_state: {stateCal_state}, next state: {next_state}")
         # TODO: Problematic, now the dfa_state and dfa_word are calculated to be int, but the dict is still using tuples.
-        incrementCounterList(state=(dfa_state, dfa_word))
-
+        # incrementCounterList(state=(dfa_state, dfa_word))
+        print()
         # print("initial state: ", val_of(initial_state), "current state: ", val_of(curr_state), "\n")
         # return curr_state since we are using reduce() for the loop
         return curr_state

@@ -113,7 +113,7 @@ class TestStatement(unittest.TestCase):
             'five' comes immediately after 'three' in string_target, skipping 'four'
         '''
         print("\n Test test_fail")
-        string_target = ['one two', 'three five']
+        string_target = ['one two three', 'four six']
         counterListTarget = [1, 1]
         corpus = 'one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen'
         corpus = corpus.split()
