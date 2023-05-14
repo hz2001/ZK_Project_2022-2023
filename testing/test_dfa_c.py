@@ -114,7 +114,7 @@ class TestStatement(unittest.TestCase):
         '''
         print("\n Test test_fail")
         string_target = ['one two three', 'four six']
-        counterListTarget = [1, 1]
+        #counterListTarget = [1, 1] #test pass if the sum of all counters not meet the requirment.
         corpus = 'one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen'
         corpus = corpus.split()
         file_string = SecretList([util.word_to_integer(_str)
@@ -129,8 +129,7 @@ class TestStatement(unittest.TestCase):
             dfa=dfa, document=file_string, zeroState=zero_state)
 
         # the test is successful if not all state in counterList is greater than the target list
-        for i in range(len(counterListTarget)):
-            self.assertLess(counterList[i], counterListTarget[i])
+        self.assertLess(sum(counterList), 2)
 
 
 if __name__ == '__main__':

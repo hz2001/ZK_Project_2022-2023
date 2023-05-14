@@ -240,10 +240,10 @@ def eliminateRedundency(dfa: dict, counterDict: dict, stringlist: list) -> tuple
     for key in dfa.keys():
         if dfa[key] == defaultState(stringlist) and counterDict[key] == list(defaultState(stringlist)):
             del newdfa[key]
-        if counterDict[key] == list(defaultState(stringlist)):
+        #if counterDict[key] == list(defaultState(stringlist)):
             del newCounterDict[key]
 
-    print(f"DFA: {newdfa}, counterDict: {counterDict}")
+    #print(f"DFA: {newdfa}, counterDict: {counterDict}")
     return (newdfa, newCounterDict)
 
 
@@ -311,7 +311,8 @@ def dfa_from_string(stringlist: list[str], test=False) -> dict:
         (dfa, counter_dict) = __dfa_from_string_full(stringlist=stringlist)
         (dfa, counter_dict) = eliminateRedundency(dfa, counter_dict, stringlist)
         (dfa, counter_dict) = toNumricalDFA(dfa, counter_dict)
-        
+    print("stringlist: ",stringlist)
+    print(f"DFA: {dfa}, counterDict: {counter_dict}")
     global counterDict # init counterDict and counterList as global vars. According to tests, these variables cannot be declared outside, otherwise they will be in different memory address when reassigned with new values.
     counterDict = counter_dict
     global counterList
@@ -381,7 +382,7 @@ def run_dfa(dfa: dict, document, zeroState):
                              #incrementCounterList(state=(dfa_state,dfa_word) ,next_state=stateCal_next),
                              stateCal_next,
                              curr_state)
-            question = mux((initial_state == stateCal_state) & (word == dfa_word) & (stateCal_next == zeroState),
+            question = mux((initial_state == stateCal_state) & (word == dfa_word),
                              #incrementCounterList(state=(dfa_state,dfa_word) ,next_state=stateCal_next),
                              #stateCal_next,
                              True,
