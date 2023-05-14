@@ -2,7 +2,7 @@
 # This file contains everything that we need to build the dfa with counter.
 
 from .util import *
-from .global_vars import counterDict
+from .global_vars import counterDict, counterList
 
 
 def stateCal(s: tuple) -> int:
@@ -283,7 +283,8 @@ def dfa_from_string(stringlist: list[str], test=False) -> dict:
         This function builds the dfa from a list of strings, the same logic 
         with dfa_from_string_full, except it would eliminate redunency of 
         the DFA & counterDict. This function will also update the global 
-        variable counterDict as needed. counterDict will not be returned, therefore.
+        variable counterDict and counterList as needed. The global variables
+        will not be returned.
 
     Args:
         stringlist (list[str]): A python list of strings (grouped by sentences)
@@ -307,4 +308,6 @@ def dfa_from_string(stringlist: list[str], test=False) -> dict:
         
     global counterDict
     counterDict = counter_dict
+    global counterList
+    counterList = [0 for i in range(len(stringlist))]
     return dfa  # since we updated the global variable counterDict in the line before, returning two values is not necessary.

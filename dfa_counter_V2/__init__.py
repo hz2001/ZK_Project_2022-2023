@@ -1,11 +1,11 @@
-# sys.path.append("/usr/src/app/examples/substring_search/common")
-from .util import *
 import sys
 from .counter_dfa_builder import *
 from .counter_substring_search import *
 from miniwizpl import *
 from miniwizpl.expr import *
 
+sys.path.append("/usr/src/app/examples/substring_search/common")
+import util
 
 def main(target_dir, prime, prime_name, size, operation):
     # Importing ENV Var & Checking if prime meets our requirement
