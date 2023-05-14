@@ -1,6 +1,4 @@
 # This file is a copy of the test for stringlist_search.py except that it is used to test the method of dfa_counter.
-import util
-import dfa_counter_V2 as statement
 import sys
 import unittest
 from unittest.mock import patch
@@ -9,9 +7,10 @@ from miniwizpl.expr import *
 
 sys.path.append(
     "/usr/src/app/examples/substring_search/IR0/ZK_Project_2022-2023")
+import dfa_counter_V2 as statement
 
 sys.path.append("/usr/src/app/examples/substring_search/common")
-
+import util
 
 class TestStatement(unittest.TestCase):
 

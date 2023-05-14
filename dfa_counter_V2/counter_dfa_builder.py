@@ -7,7 +7,7 @@ import global_vars
 
 def stateCal(s: tuple) -> int:
     """
-    Takes in a state (in tuple format) and return a unique 
+    Takes in a state of the DFA (in tuple format) and return a unique 
     hash of that word in integer
 
     Args:
@@ -47,7 +47,7 @@ def toNumberSet(stringlist: list) -> set:
 
 
 def toNumberStringList(stringlist: list) -> list:
-    """Convert the given stringlist to numical format
+    """Convert the given stringlist to int format.
     Examples:
     ['import socket', 'import numpy'] -> ['123 456','123 789']
     Where '123', '456', '789' varies when algorithm changes"""
@@ -58,8 +58,8 @@ def toNumberStringList(stringlist: list) -> list:
 
 
 def toNumricalDFA(dfa: dict, counterDict: dict) -> dict:
-    """This function will convert a dfa into numical 
-    for miniwizpl to run."""
+    """This function converts the word in DFA key into 
+    integer for miniwizpl to run."""
     numericDFA = {}
     numericCounterDict = {}
     for (state, word), nextState in dfa.items():
@@ -70,24 +70,27 @@ def toNumricalDFA(dfa: dict, counterDict: dict) -> dict:
 
 def defaultState(stringlist: list) -> tuple:
     """
-    Given the string list, return the default states
+    Given the string list, returns the default states
     (which has the length of stringlist) with all 0s.
     """
     return tuple(len(stringlist) * [0])
 
 
 def validDFA(dfa: dict, queue: set, stringlist: list = None, wordset: set = None):
-    """
+    """ Validate the dfa, update what to be implemented.
+    
         A valid dfa is defined to be a dfa that reaches every other states given a
     state, aka strongly connected.
-        This function will update the given queue if some states are not implemented,
+        This function updates the given queue if some states are not implemented,
     and will return True if the dfa is strongly connected.
 
     Args:
-        dfa (dict): the dfa dictionary.
-        queue (set): a queue that stores what to be implemented next.
-        stringlist (list, optional): _description_. Defaults to None.
-        wordset (set, optional): _description_. Defaults to None.
+        dfa (dict): the dfa dictionary. \n
+        queue (set): a queue that stores what to be implemented next.   \n
+        stringlist (list, optional): The target string list. Defaults to None. \n  
+        wordset (set, optional): . Defaults to None.    
+        
+        Note: One of stringlist/wordset must be passed in into the function.
 
     Returns:
         bool: True/False
