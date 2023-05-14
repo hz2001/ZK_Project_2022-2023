@@ -1,10 +1,11 @@
-### Must run with miniwizpl environment
+# Must run with miniwizpl environment
 
 from miniwizpl import *
 from miniwizpl.expr import *
 # from functools import reduce # we are not using reduce from functools, seems that we are using the one from miniwizpl
 from .counter_dfa_builder import stateCal
-from dfa_counter_V2 import *
+import global_vars
+
 
 def incrementCounterList(state: tuple) -> None:
     """
@@ -13,12 +14,13 @@ def incrementCounterList(state: tuple) -> None:
     Args:
         state (tuple): a state within the dfa, with format tuple(tuple, word)
     """
-    global counterList
-    global counterDict
-    if state in counterDict:
-        toIncrement = counterDict[state]
-        counterList = [toIncrement[i] + counterList[i] for i in range(len(counterList))]
-    return 
+
+    if state in global_vars.counterDict:
+        toIncrement = global_vars.counterDict[state]
+        global_vars.counterList = [toIncrement[i] + global_vars.counterList[i]
+                                   for i in range(len(global_vars.counterList))]
+    return
+
 
 def run_dfa(dfa: dict, document, zeroState):
     """
@@ -31,6 +33,7 @@ def run_dfa(dfa: dict, document, zeroState):
         dfa (dict): The DFA dictionary.
         document (str): string-like, the target document as plain text.
         zeroState (tuple): The default state of the DFA. """
+
     def next_state_fun(word, initial_state):
         '''
             I changed this part, otherwise when two sub texts are not contonious,
@@ -42,25 +45,27 @@ def run_dfa(dfa: dict, document, zeroState):
         for (dfa_state, dfa_word), next_state in dfa.items():
             print(
                 "curr state: ", val_of(curr_state),
-                "dfa state: ", dfa_state,"\n",
+                "dfa state: ", dfa_state, "\n",
                 "input string: ", val_of(word),
-                "dfa string: ", dfa_word,"\n",
-                "next_state", next_state,"\n")
+                "dfa string: ", dfa_word, "\n",
+                "next_state", next_state, "\n")
             # transform all tuples to numbers
-            dfa_state = stateCal(dfa_state) # TODO: Ask if I can do stateCal to the dfa before the run dfa, since I might have to use (dfa_state, dfa_word) for the counter increment as well. see line 60
+            # TODO: Ask if I can do stateCal to the dfa before the run dfa, since I might have to use (dfa_state, dfa_word) for the counter increment as well. see line 60
+            dfa_state = stateCal(dfa_state)
             next_state = stateCal(next_state)
-            
+
             curr_state = mux((initial_state == dfa_state) & (word == dfa_word),
                              next_state,
                              curr_state)
-            # Break out of the loop when finding the correct state & word, 
+            # Break out of the loop when finding the correct state & word,
             # this will also allow us to use the latest tuple for counter
-            break 
-        
-        incrementCounterList(state = (dfa_state, dfa_word)) # TODO: Problematic, now the dfa_state and dfa_word are calculated to be int, but the dict is still using tuples.
-        global counterList
-        print(f"coutnerList = {counterList}") # TODO: Does counterList have to be secret as well??
-        
+            break
+
+        # TODO: Problematic, now the dfa_state and dfa_word are calculated to be int, but the dict is still using tuples.
+        incrementCounterList(state=(dfa_state, dfa_word))
+        # global counterList
+        # print(f"coutnerList = {counterList}") # TODO: Does counterList have to be secret as well??
+
         # print("initial state: ", val_of(initial_state), "current state: ", val_of(curr_state), "\n")
         # return curr_state since we are using reduce() for the loop
         return curr_state
@@ -75,6 +80,9 @@ def run_dfa(dfa: dict, document, zeroState):
     #     print("zeroState", 'is not iterable')
 
     reduce(next_state_fun, document, zeroState)
+
+    # cleanup
+    counterList = global_vars.counterList.copy()
+    global_vars.counterDict = {}  # clear the output for the global counterDict
+    global_vars.counterList = []  # clear the output for the global counterList
     return counterList
-
-
