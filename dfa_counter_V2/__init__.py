@@ -7,10 +7,6 @@ from miniwizpl import *
 from miniwizpl.expr import *
 
 
-counterDict = {}
-counterList = []
-
-
 def main(target_dir, prime, prime_name, size, operation):
     # Importing ENV Var & Checking if prime meets our requirement
 
@@ -29,15 +25,16 @@ def main(target_dir, prime, prime_name, size, operation):
 
     if operation == "test":
         corpus = util.generate_text(int(size))
-        stringList = util.generate_target(corpus, file_name, length=2, n_string=4)
+        stringList = util.generate_target(
+            corpus, file_name, length=2, n_string=4)
         target_counterList = [1 for i in stringList]
         print("Test (First 10 Strings): ", corpus[0:10])
         print("Actual text length:", len(corpus))
 
     else:
-        stringList = ['one two', 'three five']
+        stringList = ["one two", "three five"]
 
-        with open("/usr/src/app/examples/dfa_test_input.txt", 'r') as f:
+        with open("/usr/src/app/examples/dfa_test_input.txt", "r") as f:
             corpus = f.read()
         corpus = corpus.split()
         print("Text: ", corpus, "\n")
@@ -53,36 +50,33 @@ def main(target_dir, prime, prime_name, size, operation):
 
     # Build and traverse a DFA
     stateLength = len(stringList)
-    global counterDict
-    (dfa, counterDict)  = dfa_from_string(stringList)
-    global counterList
-    counterList = [0 for i in range(stateLength)]
+    dfa = dfa_from_string(stringList)
+
     print("Traversing DFA")
-    
-    latest_state = run_dfa(dfa=dfa, document=file_string, zeroState=zero_state)
+
+    counterList = run_dfa(dfa=dfa, document=file_string, zeroState=zero_state)
     print("Output Assertion")
 
     print("Running Poseidon Hash")
     util.run_poseidon_hash(file_string)
-    print("\n", "Latest State: ", val_of(latest_state), "\n")
-
     # assert if the counterList we output matches the counterList provided
- 
+
     for i in range(stateLength):
-        assert0(counterList[i] - target_counterList[i]) # TODO: currently set to be asserting each string to appear once 
-        
-    global assertions # TODO: ask is it safe to do so here?
-    
-    
+        assert0(
+            counterList[i] - target_counterList[i]
+        )  # TODO: currently set to be asserting each string to appear once
+
+    global assertions  # TODO: ask is it safe to do so here?
+
     # claim a return_state so that we don't have to change the test file.
     if False in assertions:
         print("DFA did not reached the accept state \n")
     else:
         print("DFA successfully reached the accept state \n")
-        
+
     print("Generating Output \n")
     print_ir0(target_dir + "/" + f"{file_name}_{prime_name}_{size}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main(*sys.argv[1:])
