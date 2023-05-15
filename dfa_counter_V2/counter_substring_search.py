@@ -5,11 +5,11 @@
 from miniwizpl import *
 from miniwizpl.expr import *
 # from functools import reduce # we are not using reduce from functools, seems that we are using the one from miniwizpl
-from .counter_dfa_builder import *
+# from .counter_dfa_builder import *
 from .util import *
 
 counterDict = {}
-counterList = []
+counterList = SecretIndexList([])
 
 def stateCal(s: tuple) -> int:
     """
@@ -313,10 +313,16 @@ def dfa_from_string(stringlist: list[str], test=False) -> dict:
         (dfa, counter_dict) = toNumricalDFA(dfa, counter_dict)
     print("stringlist: ",stringlist)
     print(f"DFA: {dfa}, counterDict: {counter_dict}")
-    global counterDict # init counterDict and counterList as global vars. According to tests, these variables cannot be declared outside, otherwise they will be in different memory address when reassigned with new values.
-    counterDict = counter_dict
+     # init counterDict and counterList as global vars. According to tests, these variables cannot be declared outside, otherwise they will be in different memory address when reassigned with new values.
+    # change the type of value in coutnerDict to secretIndexList for run_dfa()
+    secret_counterDict = {}
+    for key, val in counter_dict.items():
+        print(val)
+        secret_counterDict[key] = SecretIndexList(val)
+    global counterDict
+    counterDict = secret_counterDict
     global counterList
-    counterList = [0 for i in range(len(stringlist))]
+    counterList = SecretIndexList([0 for i in range(len(stringlist))])
     print(f"!!! assigning counterDict: {counterDict, id(counterDict)}, counterList: {counterList, id(counterList)}")
     return dfa  # since we updated the global variable counterDict in the line before, returning two values is not necessary.
 
@@ -384,7 +390,9 @@ def run_dfa(dfa: dict, document, zeroState):
             global counterList
             global counterDict
             length = len(dfa_state)
+            
             vec = [counterList[i] + counterDict[(dfa_state,dfa_word)][i] for i in range(length)] # !!! counterList must be hidden, ask if we can add Secret list to a public list.
+            # counterList : Secret list (Prim) [2,1];  counterDict[(dfa_state,dfa_word)]: list [1,0]
                 
             counterList = mux((initial_state == stateCal_state) & (word == dfa_word),
                               vec,
@@ -396,12 +404,10 @@ def run_dfa(dfa: dict, document, zeroState):
         
         # return curr_state since we are using reduce() for the loop
         return curr_state
-
+    global counterList 
+    global counterDict
     reduce(next_state_fun, document, zeroState)
     
     # cleanup
-    global counterList 
-    global counterDict
-    
     local_counterList = counterList.copy()
     return local_counterList
