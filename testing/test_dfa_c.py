@@ -35,7 +35,7 @@ class TestStatement(unittest.TestCase):
         counterList = val_of(counterList)
         counterListTarget = [1, 1]
         for i in range(len(counterListTarget)):
-            self.assertGreaterEqual(counterList[i], counterListTarget[i])
+            self.assertGreaterEqual(val_of(counterList[i]), counterListTarget[i])
 
     def test_intermediate(self):
         '''
@@ -58,7 +58,7 @@ class TestStatement(unittest.TestCase):
         counterList = val_of(counterList)
         counterListTarget = [1, 1]
         for i in range(len(counterListTarget)):
-            self.assertGreaterEqual(counterList[i], counterListTarget[i])
+            self.assertGreaterEqual(val_of(counterList[i]), counterListTarget[i])
 
     def test_intermediate2(self):
         '''
@@ -80,7 +80,7 @@ class TestStatement(unittest.TestCase):
         counterList = val_of(counterList)
         counterListTarget = [1, 1]
         for i in range(len(counterListTarget)):
-            self.assertGreaterEqual(counterList[i], counterListTarget[i])
+            self.assertGreaterEqual(val_of(counterList[i]), counterListTarget[i])
 
     def test_advance(self):
         '''
@@ -105,7 +105,7 @@ class TestStatement(unittest.TestCase):
         counterListTarget = [1, 1, 1]
         # the test is successful if all states in counterList is greater than the target list
         for i in range(len(counterListTarget)):
-            self.assertGreaterEqual(counterList[i], counterListTarget[i])
+            self.assertGreaterEqual(val_of(counterList[i]), counterListTarget[i])
 
     def test_fail(self):
         '''
@@ -127,7 +127,7 @@ class TestStatement(unittest.TestCase):
         dfa = statement.dfa_from_string(string_target)
         counterList = statement.run_dfa(
             dfa=dfa, document=file_string, zeroState=zero_state)
-        counterList = val_of(counterList)
+        counterList = [val_of(i) for i in counterList]
         # the test is successful if not all state in counterList is greater than the target list
         self.assertLess(sum(counterList), 2)
 

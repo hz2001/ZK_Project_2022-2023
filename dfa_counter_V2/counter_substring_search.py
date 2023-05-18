@@ -314,16 +314,11 @@ def dfa_from_string(stringlist: list[str], test=False) -> dict:
     print("stringlist: ",stringlist)
     print(f"DFA: {dfa}, counterDict: {counter_dict}")
      # init counterDict and counterList as global vars. According to tests, these variables cannot be declared outside, otherwise they will be in different memory address when reassigned with new values.
-    # change the type of value in coutnerDict to secretIndexList for run_dfa()
-    secret_counterDict = {}
-    for key, val in counter_dict.items():
-        print(val)
-        secret_counterDict[key] = SecretIndexList(val)
     global counterDict
-    counterDict = secret_counterDict
+    counterDict = counter_dict
     global counterList
-    counterList = SecretIndexList([0 for i in range(len(stringlist))])
-    print(f"!!! assigning counterDict: {counterDict, id(counterDict)}, counterList: {counterList, id(counterList)}")
+    # counterList = SecretIndexList([0 for i in range(len(stringlist))])
+    counterList = [SecretInt(0) for i in range(len(stringlist))]
     return dfa  # since we updated the global variable counterDict in the line before, returning two values is not necessary.
 
 
@@ -366,52 +361,28 @@ def run_dfa(dfa: dict, document, zeroState):
         # go to zeroState always, unless we have the next state in the DFA
         curr_state = zeroState 
         for (dfa_state, dfa_word), next_state in dfa.items():
-            #print(
-                # "curr state: ", val_of(curr_state),"\n",
-                # "dfa state: ", dfa_state, "\n", initial_state == stateCal(dfa_state),
-                # "input string: ", val_of(word),
-                # "dfa string: ", dfa_word, "\n",val_of(word) == dfa_word ,
-                # "next_state", next_state)
-            
             # transform all tuples to numbers
             stateCal_state = stateCal(dfa_state) 
             stateCal_next = stateCal(next_state)
-            curr_state = mux((initial_state == stateCal_state) & (word == dfa_word),
+            cond = (initial_state == stateCal_state) & (word == dfa_word)
+            curr_state = mux(cond,
                              stateCal_next,
                              curr_state)
-            # unused, we should not reveal the value of the multiplexer
-            # question = mux((initial_state == stateCal_state) & (word == dfa_word),
-            #                  #stateCal_next,
-            #                  True,
-            #                  False)
-            # if val_of(question):
-            #     incrementCounterList(state=(dfa_state,dfa_word))
             
             global counterList
             global counterDict
             length = len(dfa_state)
-            print(type(counterList), length)
-            
-            # vec = [counterList[i] + counterDict[(dfa_state,dfa_word)][i] for i in range(length)] # !!! counterList must be hidden, ask if we can add Secret list to a public list.
-            # counterList : Secret list (Prim) [2,1];  counterDict[(dfa_state,dfa_word)]: list [1,0]
-            # counterList = mux((initial_state == stateCal_state) & (word == dfa_word),
-                            #   vec,
-                            #   counterList)
-            cond = (initial_state == stateCal_state) & (word == dfa_word)
             for i in range(length):
+                #print(f"\toldVar at {i}: {val_of(counterList[i])}", 
+                 #     f"newVar at {i}: {val_of(counterList[i]+ counterDict[(dfa_state,dfa_word)][i])}")
                 old = counterList[i]
                 counterList[i] = mux(cond,
-                                      old + counterDict[(dfa_state,dfa_word)][i],
+                                      old + SecretInt(counterDict[(dfa_state,dfa_word)][i]),
                                       old)
-                print(f"\toldVar at {i}: {val_of(old)}, newVar at {i}: {val_of(counterList[i])}")
-
-        # print(f"initial state: {val_of(initial_state)}, curr_state: {val_of(curr_state)}, word: {val_of(word)}")
-        # print(f"dfa_state: {dfa_state}, stateCal_state: {stateCal_state}, next state: {next_state}")
-        # print()
         
         # return curr_state since we are using reduce() for the loop
         return curr_state
-    global counterList 
+    global counterList
     global counterDict
     reduce(next_state_fun, document, zeroState)
     
