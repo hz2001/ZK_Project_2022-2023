@@ -391,12 +391,18 @@ def run_dfa(dfa: dict, document, zeroState):
             global counterDict
             length = len(dfa_state)
             
-            vec = [counterList[i] + counterDict[(dfa_state,dfa_word)][i] for i in range(length)] # !!! counterList must be hidden, ask if we can add Secret list to a public list.
+            # vec = [counterList[i] + counterDict[(dfa_state,dfa_word)][i] for i in range(length)] # !!! counterList must be hidden, ask if we can add Secret list to a public list.
             # counterList : Secret list (Prim) [2,1];  counterDict[(dfa_state,dfa_word)]: list [1,0]
-                
-            counterList = mux((initial_state == stateCal_state) & (word == dfa_word),
-                              vec,
-                              counterList)
+            # counterList = mux((initial_state == stateCal_state) & (word == dfa_word),
+                            #   vec,
+                            #   counterList)
+            cond = (initial_state == stateCal_state) & (word == dfa_word)
+            for i in range(length):
+                old = counterList[i]
+                counterList[i] = mux(cond,
+                                      old + counterDict[(dfa_state,dfa_word)][i],
+                                      old)
+            
 
         # print(f"initial state: {val_of(initial_state)}, curr_state: {val_of(curr_state)}, word: {val_of(word)}")
         # print(f"dfa_state: {dfa_state}, stateCal_state: {stateCal_state}, next state: {next_state}")
