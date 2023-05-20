@@ -127,7 +127,7 @@ from sls_debug.py import *
 Define your secret document: 
 
 ```
-file_string = 
+file_string = SecretList([word_to_integer(_str) for _str in <your file>])
 ```
 
 
@@ -169,12 +169,14 @@ Originally, we thought [THIS METHOD](./dfa_original_V1.0/stringlist_search.py) w
 This method uses counters to verify if a file contains the substrings we are looking for. Given a list of substrings, this method will take track of a counter of each substrings, then increment counters when they are find in the document to be verified. It will certify in the end if all instances are found as intended. 
 
 #### limitations
-However, the second method is implemented with some limitations, as the substrings that is intended to be found/not found in the file must present as the following format: 
-For each element in the list, if [A B C, A D C, E B F, E D C, ...] where A,E is must not 
+However, the second method is implemented with some limitations, as the substrings that is intended to be found/not found in the file must not present with the following format:
+1. the starting string must present in the starting position for all substrings, so does the last string. For example, ["hello world peace", "hello hi"] is valid, but ["hello world peace", "hi hello"] is not ok, and ["worry hello world", "hello hi"] is not ok as well.
 
-Since this method have so much problem without easy solutions, we rewrote this method in dfa_counter_V2, which is shown below.
+2. one substring cannot be a substring of another one. For example, ["hello world peace", "hello world"] is not ok. 
 
-### dfa_counter_V2
+**Since this method have so much problem without easy solutions, we rewrote this method in dfa_counter_V2, which is shown below.**
+
+#### dfa_counter_V2
 In the dfa_counter_V2 module, we introduced a fully functional solution of the substring search problem using counters. It also supports verifications of multiple occurance of the same word in the hidden document. 
 
 
@@ -202,7 +204,7 @@ DFA = {((0, 0), 1822522148): [0, 0],
  ((1, 0), 423132159): [0, 0],
  ((1, 0), 971933143): [1, 0],
  ((0, 1), 1860498228): [0, 0],
- ((0, 1), 1822522148): [0, 0],
+ ((0, 1), 1822522148): [0,'; 0],
  ((0, 1), 423132159): [0, 0],
  ((0, 2), 1822522148): [0, 0],
  ((0, 2), 423132159): [0, 0],
@@ -215,16 +217,56 @@ The string_search.py file is runable on its own.
 
 To run this file, run:  
 ```
-cd dfa_original_V1
-python3 stringlist_search.py
+cd dfa_counter_V2
 ```
 
-The sls_debug.py is intended to be run inside the docker container. If settled with the container, run:
+The coutner_stringlist_search.py is intended to be run inside the docker container. If settled with the container, run:
 ```
-python3 sls_debug.py your_target_directory your_prime_number your_prime_name your_document_size operation
+python3 coutner_stringlist_search.py your_target_directory your_prime_number your_prime_name your_document_size operation
+```
+
+#### Running Mannuly
+
+Inside a .py file or .ipynb file, do 
+```
+from coutner_stringlist_search.py import *
+```
+
+Define your secret document: 
+
+```
+file_string = SecretList([word_to_integer(_str) for _str in <your file>])
 ```
 
 
+Initiate variables needed, do
+```
+zero_state = tuple([0] * len(string_target))
+zero_state = statement.stateCal(zero_state)
+
+counterListTarget = <specify the number of instance you want for each substring>
+```
+
+To build DFA, do
+```
+dfa,counterDict = statement.dfa_from_string(string_target)
+```
+
+Run DFA, do
+```
+counterList = statement.run_dfa(
+    dfa=dfa, 
+    document=file_string, 
+    zeroState=zero_state, 
+    counterDict=counterDict, 
+    lstLen=len(string_target))
+```
+
+Asserting Results, do
+```
+for i in range(len(counterListTarget)):
+    self.assertGreaterEqual(val_of(counterList[i]), counterListTarget[i])
+``` 
 
 
 
