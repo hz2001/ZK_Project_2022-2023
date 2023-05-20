@@ -7,7 +7,7 @@ from miniwizpl.expr import *
 
 sys.path.append(
     "/usr/src/app/examples/substring_search/IR0/ZK_Project_2022-2023")
-import dfa_counter_V2.counter_substring_search as statement
+import dfa_counter_V2.copy_with_no_global_vars as statement
 
 sys.path.append("/usr/src/app/examples/substring_search/common")
 import util
@@ -29,10 +29,13 @@ class TestStatement(unittest.TestCase):
         zero_state = tuple([0] * len(string_target))
         zero_state = statement.stateCal(zero_state)
         
-        dfa = statement.dfa_from_string(string_target)
+        dfa, counterDict = statement.dfa_from_string(string_target)
         counterList = statement.run_dfa(
-            dfa=dfa, document=file_string, zeroState=zero_state)
-        counterList = val_of(counterList)
+            dfa=dfa, 
+            document=file_string, 
+            zeroState=zero_state, 
+            counterDict=counterDict, 
+            lstLen=len(string_target))
         counterListTarget = [1, 1]
         for i in range(len(counterListTarget)):
             self.assertGreaterEqual(val_of(counterList[i]), counterListTarget[i])
@@ -52,10 +55,13 @@ class TestStatement(unittest.TestCase):
         zero_state = tuple([0] * len(string_target))
         zero_state = statement.stateCal(zero_state)
 
-        dfa = statement.dfa_from_string(string_target)
+        dfa,counterDict = statement.dfa_from_string(string_target)
         counterList = statement.run_dfa(
-            dfa=dfa, document=file_string, zeroState=zero_state)
-        counterList = val_of(counterList)
+            dfa=dfa, 
+            document=file_string, 
+            zeroState=zero_state, 
+            counterDict=counterDict, 
+            lstLen=len(string_target))
         counterListTarget = [1, 1]
         for i in range(len(counterListTarget)):
             self.assertGreaterEqual(val_of(counterList[i]), counterListTarget[i])
@@ -74,10 +80,13 @@ class TestStatement(unittest.TestCase):
         zero_state = tuple([0] * len(string_target))
         zero_state = statement.stateCal(zero_state)
 
-        dfa = statement.dfa_from_string(string_target)
+        dfa,counterDict = statement.dfa_from_string(string_target)
         counterList = statement.run_dfa(
-            dfa=dfa, document=file_string, zeroState=zero_state)
-        counterList = val_of(counterList)
+            dfa=dfa, 
+            document=file_string, 
+            zeroState=zero_state, 
+            counterDict=counterDict, 
+            lstLen=len(string_target))
         counterListTarget = [1, 1]
         for i in range(len(counterListTarget)):
             self.assertGreaterEqual(val_of(counterList[i]), counterListTarget[i])
@@ -98,10 +107,13 @@ class TestStatement(unittest.TestCase):
         zero_state = tuple([0] * len(string_target))
         zero_state = statement.stateCal(zero_state)
 
-        dfa = statement.dfa_from_string(string_target)
+        dfa,counterDict = statement.dfa_from_string(string_target)
         counterList = statement.run_dfa(
-            dfa=dfa, document=file_string, zeroState=zero_state)
-        counterList = val_of(counterList)
+            dfa=dfa, 
+            document=file_string, 
+            zeroState=zero_state, 
+            counterDict=counterDict, 
+            lstLen=len(string_target))
         counterListTarget = [1, 1, 1]
         # the test is successful if all states in counterList is greater than the target list
         for i in range(len(counterListTarget)):
@@ -124,9 +136,13 @@ class TestStatement(unittest.TestCase):
         zero_state = statement.stateCal(zero_state)
 
 
-        dfa = statement.dfa_from_string(string_target)
+        dfa,counterDict = statement.dfa_from_string(string_target)
         counterList = statement.run_dfa(
-            dfa=dfa, document=file_string, zeroState=zero_state)
+            dfa=dfa, 
+            document=file_string, 
+            zeroState=zero_state, 
+            counterDict=counterDict, 
+            lstLen=len(string_target))
         counterList = [val_of(i) for i in counterList]
         # the test is successful if not all state in counterList is greater than the target list
         self.assertLess(sum(counterList), 2)

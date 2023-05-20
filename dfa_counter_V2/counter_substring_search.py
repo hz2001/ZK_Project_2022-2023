@@ -6,12 +6,12 @@ from miniwizpl import *
 from miniwizpl.expr import *
 try:
     sys.path.append("/usr/src/app/examples/substring_search/common")
-    import util
+    from .util import *
 except: 
     from .util import *   # Used when running this file from the container environment.
 
 counterDict = {}
-counterList = SecretIndexList([])
+counterList = []
 
 def stateCal(s: tuple) -> int:
     """
@@ -107,7 +107,7 @@ def validDFA(dfa: dict, queue: set, stringlist: list = None, wordset: set = None
     # print(f"\n calling function validDFA(), queue: {queue}")
     states = set(
         [i[0] for i in dfa.keys()] + [i[1] for i in dfa.items()]
-    )  # TODO: fix this
+    )  
     # process if get a stringlist, else use wordset
     if wordset is None:
         try:
@@ -353,7 +353,7 @@ def run_dfa(dfa: dict, document, zeroState):
         document (str): string-like, the target document as plain text.
         zeroState (int): The default state of the DFA in integer format. """
 
-    def next_state_fun(word, initial_state): # TODO: initial_state could be a tuple?? try this out
+    def next_state_fun(word, initial_state): 
         '''
             The function to support iterations through the secret document. 
         '''

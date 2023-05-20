@@ -6,7 +6,7 @@ from miniwizpl import *
 from miniwizpl.expr import *
 try:
     sys.path.append("/usr/src/app/examples/substring_search/common")
-    import util
+    from .util import *
 except: 
     from .util import *   # Used when running this file from the container environment.
 
