@@ -7,7 +7,7 @@ from miniwizpl.expr import *
 
 sys.path.append(
     "/usr/src/app/examples/substring_search/IR0/ZK_Project_2022-2023")
-import dfa_counter_V2.counter_substring_search as statement
+import dfa_counter_V2.counter_substring_search_with_global_vars as statement
 
 sys.path.append("/usr/src/app/examples/substring_search/common")
 import util
