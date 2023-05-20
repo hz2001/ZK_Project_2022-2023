@@ -349,7 +349,7 @@ def run_dfa(dfa: dict, counterDict: dict, document, zeroState, lstLen:int):
                                       old)
         
         # return curr_state since we are using reduce() for the loop
-        return curr_state
+        return (curr_state, counterDict, counterList)
     
     counterList = [SecretInt(0) for i in range(lstLen)]
     reduce(next_state_fun, document, (zeroState, counterDict, counterList))
