@@ -3,9 +3,11 @@ from miniwizpl import *
 from miniwizpl.expr import *
 
 # this path is the absolute path in the docker container
-sys.path.append("/usr/src/app/examples/substring_search/common")
-from util import *
-
+try:
+    sys.path.append("/usr/src/app/examples/substring_search/common")
+    from .util import *
+except:
+    from.util import *
 
 def islast(idx, sub_txt):
     '''
@@ -47,6 +49,11 @@ def overwrite_with_accept(accept_state, curr_state, index):
     return curr_state | (accept_state << (8* index))
 
 def dfa_from_string(stringlist, accept_state):
+    """
+    Build the DFA from string given a stringlist. strinlist must
+    be a list of integers converted from word_to_integer function.
+     
+    """
     length = len(stringlist)
     pointer = [0] * length
     next_state = {}
@@ -81,10 +88,9 @@ def dfa_from_string(stringlist, accept_state):
 def run_dfa(dfa, string, zero_state, accept, stateLength):
     def next_state_fun(word, initial_state):
         '''
-            I changed this part, otherwise when two sub texts are not contonious,
-            the DFA never moves from the zero state
+             move to the next state given a secret word
         '''
-        curr_state = initial_state
+        curr_state = zero_state 
 
         for (dfa_state, dfa_word), next_state in dfa.items():
             # print(
@@ -101,17 +107,6 @@ def run_dfa(dfa, string, zero_state, accept, stateLength):
                              next_state,
                              curr_state)
 
-            # curr_state = mux((initial_state == dfa_state) & (word == dfa_word),
-            #              next_state,
-            #              mux((initial_state == dfa_state) & (word != dfa_word) & (initial_state!=zero_state),
-            #              error_state,
-            #              curr_state))  # output here is a number, not a tuple
-
-            # print("Updated state: ", val_of(curr_state))
-
-            # TODO: check if output has any accept state for a single string: need to use the reverse version of
-            #  stateCal()
-            # TODO: if any accept state, actual_counter[index]++ and change the state back to 0
         for i in range(stateLength):
             print("value of index",i,": ", state_index(initial_state, i))
             curr_state = mux(state_index(initial_state,i) == 255,
@@ -168,12 +163,7 @@ def main(target_dir, prime, prime_name, size, operation):
     zero_state = stateCal(zero_state)
     error_state = 1000
 
-    # TODO: a reverse version of stateCal() to transform a number back to a state tuple.
-    # TODO: actual_counter = [0,0,0,...]
-    # TODO: expected_counter = [1,2,3,...]
-
     # Build and traverse a DFA
-
     dfa = dfa_from_string(string_target, accept_state)
     # print("\n", "DFA: ",dfa, "\n")
     print("Traversing DFA")

@@ -1,5 +1,7 @@
 # author: Herbert Zhang
-# Date: 9/13/2022
+# Date: 10/13/2022
+# The second draft of this project, currently not used, because could not integret with miniwizpl environment, and the algorithm is buggy with many edge cases.
+
 import sys
 from miniwizpl import SecretInt, SecretList, mux, public_foreach, print_emp, assert0
 from miniwizpl.expr import *
@@ -139,7 +141,7 @@ If the current substring (word) is in next_states, and is a accept state, then  
                                 is not in next_states, and is regular/accept state, _current -> []
 '''
 # the DFA can contain every information, including current_string field and the init_states/accept_states information
-# TODO:do more testing to ensure the result is correct,
+# TODO:do more testing to ensure the result is correct
 def run_dfa(doc: str, dfa: dict) -> dict:
     def next_state_fun(word, current_state, current_string:list, lst:list):
         result = init

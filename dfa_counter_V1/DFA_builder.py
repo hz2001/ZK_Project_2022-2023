@@ -1,5 +1,6 @@
 # author: Herbert Zhang
 # Date: 9/13/2022
+# The very first draft of this project, currently not used, because could not integret with miniwizpl environment, and the algorithm is buggy with many edge cases.
 import sys
 
 whitelist = ["import numpy", "import socket", "import hello import world import", "something"]
@@ -241,23 +242,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-'''
-10/12/2022 update:
-fix the bug when we have a list contain string such as "hello world hello world numpy"
-hash to integers before running
-run with docker container 
-run with miniwizpl
-
-
-10/21/2022 update:
-size of the input file
-how many substrings we are searching for
-number of string we are searching for
-lengths of the strings we are searching for
-
-"word_to_integer() function"
-run tests in above parameters
-
-
-'''

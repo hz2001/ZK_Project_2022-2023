@@ -1,5 +1,7 @@
 # author: Herbert Zhang
-# Date: 9/13/2022
+# Date: 11/13/2022
+# The third draft of this project, currently not used, because could not integret with miniwizpl environment, and the algorithm is buggy with many edge cases.
+
 import sys
 from miniwizpl import SecretInt, SecretList, mux, public_foreach, print_emp, assert0
 import timeit
@@ -293,21 +295,4 @@ def assert_whitelist(lst, file: str) -> bool:
 # print_emp(outputs, 'miniwizpl_test.cpp')
 endTime = timeit.timeit()
 print(endTime - startTime)
-'''
-10/12/2022 update:
-fix the bug when we have a list contain string such as "hello world hello world numpy"
-hash to integers before running
-run with docker container 
-run with miniwizpl
 
-
-10/21/2022 update:
-size of the input file
-how many substrings we are searching for
-number of string we are searching for
-lengths of the strings we are searching for
-
-
-
-
-'''

@@ -7,7 +7,7 @@ from miniwizpl.expr import *
 
 sys.path.append(
     "/usr/src/app/examples/substring_search/IR0/ZK_Project_2022-2023")
-import dfa_counter_V2 as statement
+import dfa_counter_V2.counter_substring_search_with_global_vars as statement
 
 sys.path.append("/usr/src/app/examples/substring_search/common")
 import util
@@ -32,7 +32,6 @@ class TestStatement(unittest.TestCase):
         dfa = statement.dfa_from_string(string_target)
         counterList = statement.run_dfa(
             dfa=dfa, document=file_string, zeroState=zero_state)
-        counterList = val_of(counterList)
         counterListTarget = [1, 1]
         for i in range(len(counterListTarget)):
             self.assertGreaterEqual(val_of(counterList[i]), counterListTarget[i])
@@ -55,7 +54,6 @@ class TestStatement(unittest.TestCase):
         dfa = statement.dfa_from_string(string_target)
         counterList = statement.run_dfa(
             dfa=dfa, document=file_string, zeroState=zero_state)
-        counterList = val_of(counterList)
         counterListTarget = [1, 1]
         for i in range(len(counterListTarget)):
             self.assertGreaterEqual(val_of(counterList[i]), counterListTarget[i])
@@ -77,7 +75,6 @@ class TestStatement(unittest.TestCase):
         dfa = statement.dfa_from_string(string_target)
         counterList = statement.run_dfa(
             dfa=dfa, document=file_string, zeroState=zero_state)
-        counterList = val_of(counterList)
         counterListTarget = [1, 1]
         for i in range(len(counterListTarget)):
             self.assertGreaterEqual(val_of(counterList[i]), counterListTarget[i])
@@ -101,7 +98,6 @@ class TestStatement(unittest.TestCase):
         dfa = statement.dfa_from_string(string_target)
         counterList = statement.run_dfa(
             dfa=dfa, document=file_string, zeroState=zero_state)
-        counterList = val_of(counterList)
         counterListTarget = [1, 1, 1]
         # the test is successful if all states in counterList is greater than the target list
         for i in range(len(counterListTarget)):
