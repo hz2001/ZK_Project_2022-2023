@@ -402,7 +402,7 @@ def main(target_dir, prime, prime_name, size, operation):
     set_field(int(prime))
 
     try:
-        assert util.check_prime() == True
+        assert check_prime() == True
     except:
         print("no equivalent prime (2305843009213693951) in ccc.txt")
         sys.exit(1)
@@ -410,8 +410,8 @@ def main(target_dir, prime, prime_name, size, operation):
     # Prepping target text and substrings
 
     if operation == "test":
-        corpus = util.generate_text(int(size))
-        stringList = util.generate_target(
+        corpus = generate_text(int(size))
+        stringList = generate_target(
             corpus, file_name, length=2, n_string=4)
         target_counterList = [1 for i in stringList]
         print("Test (First 10 Strings): ", corpus[0:10])
@@ -429,7 +429,7 @@ def main(target_dir, prime, prime_name, size, operation):
 
     # Transform the text file to search into miniwizpl format
 
-    file_string = SecretList([util.word_to_integer(_str) for _str in corpus])
+    file_string = SecretList([word_to_integer(_str) for _str in corpus])
 
     zero_state = tuple([0] * len(stringList))
     zero_state = stateCal(zero_state)
@@ -444,7 +444,7 @@ def main(target_dir, prime, prime_name, size, operation):
     print("Output Assertion")
 
     print("Running Poseidon Hash")
-    util.run_poseidon_hash(file_string)
+    run_poseidon_hash(file_string)
     # assert if the counterList we output matches the counterList provided
 
     for i in range(stateLength):
