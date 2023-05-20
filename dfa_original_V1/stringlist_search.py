@@ -100,7 +100,7 @@ zero_state = stateCal(zero_state)
 
 def run_dfa(dfa, string):
     def next_state_fun(word, state):
-        output = zero_state
+        output = zero_state # TODO: Need fix: when two sub texts are not contonious, the DFA never moves from the zero state
 
         for (dfa_state, dfa_word), next_state in dfa.items():
             # transform all tuples to numbers

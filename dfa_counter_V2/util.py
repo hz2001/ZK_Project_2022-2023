@@ -5,9 +5,11 @@ from miniwizpl.expr import *
 import re
 import hashlib
 sys.path.append("/usr/src/app/examples/poseidon_hash")
-from parameters import *
-from hash import Poseidon
-
+try:
+    from parameters import *
+    from hash import Poseidon
+except:
+    pass
 
 
 def word_to_integer(word_to_convert):

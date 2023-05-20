@@ -1,12 +1,14 @@
 # Author: Herbert Zhang
 # This file contains everything that we need to build and run the dfa with counter.
 # Must run with miniwizpl environment
-
+import sys
 from miniwizpl import *
 from miniwizpl.expr import *
-# from functools import reduce # we are not using reduce from functools, seems that we are using the one from miniwizpl
-# from .counter_dfa_builder import *
-from .util import *
+try:
+    sys.path.append("/usr/src/app/examples/substring_search/common")
+    import util
+except: 
+    from .util import *   # Used when running this file from the container environment.
 
 counterDict = {}
 counterList = SecretIndexList([])
@@ -43,8 +45,8 @@ def toWordSet(stringlist: list) -> set:
 def toNumberSet(stringlist: list) -> set:
     """Helper function to conver the given stringlist 
     to a set of numbers (converted from words) in string 
-    format.
-    Currently not used"""
+    format. \n
+    Important: Currently not used"""
     wordset = toWordSet(stringlist)
     numberList = set()
     for i in wordset:
@@ -185,7 +187,7 @@ def validDFA(dfa: dict, queue: set, stringlist: list = None, wordset: set = None
 def assign(
     dfa: dict, stringlist: list, state_to_implement: tuple, word: str, counterDict: dict
 ):
-    """assign one word to its next state"""
+    """Given the currently DFA, and the state to implement, assign one word to its next state"""
     # print("calling function assign()")
 
     if (state_to_implement, word) in dfa:
@@ -247,7 +249,7 @@ def eliminateRedundency(dfa: dict, counterDict: dict, stringlist: list) -> tuple
     return (newdfa, newCounterDict)
 
 
-def __dfa_from_string_full(stringlist: list[str]) -> tuple[dict, dict]:
+def dfa_from_string_full(stringlist: list[str]) -> tuple[dict, dict]:
     """
         This function builds the dfa from a list of strings.
         This function is made to be private because it does not update the
@@ -262,8 +264,6 @@ def __dfa_from_string_full(stringlist: list[str]) -> tuple[dict, dict]:
     """
 
     wordset: set = toWordSet(stringlist)
-    # print(stringlist)
-    # print(wordset)
     queue = set()
     dfa = {}
     counterDict = {}
@@ -288,9 +288,7 @@ def dfa_from_string(stringlist: list[str], test=False) -> dict:
     """
         This function builds the dfa from a list of strings, the same logic 
         with dfa_from_string_full, except it would eliminate redunency of 
-        the DFA & counterDict. This function will also update the global 
-        variable counterDict and counterList as needed. The global variables
-        will not be returned.
+        the DFA & counterDict.
 
     Args:
         stringlist (list[str]): A python list of strings (grouped by sentences)
@@ -304,11 +302,11 @@ def dfa_from_string(stringlist: list[str], test=False) -> dict:
     if test:
         # If test is specified, we are using the actual words instead of the numbers,
         # which allows miniwizpl to process.
-        (dfa, counter_dict) = __dfa_from_string_full(stringlist=stringlist)
+        (dfa, counter_dict) = dfa_from_string_full(stringlist=stringlist)
         (dfa, counter_dict) = eliminateRedundency(dfa, counter_dict, stringlist)
     else:
         stringlist = toNumberStringList(stringlist)
-        (dfa, counter_dict) = __dfa_from_string_full(stringlist=stringlist)
+        (dfa, counter_dict) = dfa_from_string_full(stringlist=stringlist)
         (dfa, counter_dict) = eliminateRedundency(dfa, counter_dict, stringlist)
         (dfa, counter_dict) = toNumricalDFA(dfa, counter_dict)
     print("stringlist: ",stringlist)
@@ -325,7 +323,9 @@ def dfa_from_string(stringlist: list[str], test=False) -> dict:
 def incrementCounterList(state):
     """
     This function takes in a state, increament the counter based on the counterDict.
-    Cannot be called in the mux() funciton, because it runs everytime the mux() is called.
+    \n
+    Important: Currently not used because this function cannot be 
+    called in the mux() funciton, because it runs everytime the mux() is called.
 
     Args:
         state (tuple): a state within the dfa, with format tuple(tuple, word)
@@ -351,12 +351,11 @@ def run_dfa(dfa: dict, document, zeroState):
     Args:
         dfa (dict): The DFA dictionary.
         document (str): string-like, the target document as plain text.
-        zeroState (tuple): The default state of the DFA. """
+        zeroState (int): The default state of the DFA in integer format. """
 
     def next_state_fun(word, initial_state): # TODO: initial_state could be a tuple?? try this out
         '''
-            I changed this part, otherwise when two sub texts are not contonious,
-            the DFA never moves from the zero state
+            The function to support iterations through the secret document. 
         '''
         # go to zeroState always, unless we have the next state in the DFA
         curr_state = zeroState 
@@ -373,8 +372,12 @@ def run_dfa(dfa: dict, document, zeroState):
             global counterDict
             length = len(dfa_state)
             for i in range(length):
-                #print(f"\toldVar at {i}: {val_of(counterList[i])}", 
-                 #     f"newVar at {i}: {val_of(counterList[i]+ counterDict[(dfa_state,dfa_word)][i])}")
+                '''
+                Important Note:
+                There is no good way of doing addition between secret list and normal python list, 
+                solved by making CounterList a normal python list with secret variables inside, then 
+                add elements 1 by 1 using secret value addition is the only choice to make.
+                '''
                 old = counterList[i]
                 counterList[i] = mux(cond,
                                       old + SecretInt(counterDict[(dfa_state,dfa_word)][i]),
@@ -389,3 +392,77 @@ def run_dfa(dfa: dict, document, zeroState):
     # cleanup
     local_counterList = counterList.copy()
     return local_counterList
+
+def main(target_dir, prime, prime_name, size, operation):
+    # Importing ENV Var & Checking if prime meets our requirement
+
+    assert len(sys.argv) == 6, "Invalid arguments"
+    _, target_dir, prime, prime_name, size, operation = sys.argv
+    file_name = "stringlist_search"
+    set_field(int(prime))
+
+    try:
+        assert util.check_prime() == True
+    except:
+        print("no equivalent prime (2305843009213693951) in ccc.txt")
+        sys.exit(1)
+
+    # Prepping target text and substrings
+
+    if operation == "test":
+        corpus = util.generate_text(int(size))
+        stringList = util.generate_target(
+            corpus, file_name, length=2, n_string=4)
+        target_counterList = [1 for i in stringList]
+        print("Test (First 10 Strings): ", corpus[0:10])
+        print("Actual text length:", len(corpus))
+
+    else:
+        stringList = ["one two", "three five"]
+
+        with open("/usr/src/app/examples/dfa_test_input.txt", "r") as f:
+            corpus = f.read()
+        corpus = corpus.split()
+        print("Text: ", corpus, "\n")
+
+    print("Target: ", stringList, "\n")
+
+    # Transform the text file to search into miniwizpl format
+
+    file_string = SecretList([util.word_to_integer(_str) for _str in corpus])
+
+    zero_state = tuple([0] * len(stringList))
+    zero_state = stateCal(zero_state)
+
+    # Build and traverse a DFA
+    stateLength = len(stringList)
+    dfa = dfa_from_string(stringList)
+
+    print("Traversing DFA")
+
+    counterList = run_dfa(dfa=dfa, document=file_string, zeroState=zero_state)
+    print("Output Assertion")
+
+    print("Running Poseidon Hash")
+    util.run_poseidon_hash(file_string)
+    # assert if the counterList we output matches the counterList provided
+
+    for i in range(stateLength):
+        assert0(
+            counterList[i] - target_counterList[i]
+        )  # TODO: currently set to be asserting each string to appear once
+
+    global assertions  # TODO: ask is it safe to do so here?
+
+    # claim a return_state so that we don't have to change the test file.
+    if False in assertions:
+        print("DFA did not reached the accept state \n")
+    else:
+        print("DFA successfully reached the accept state \n")
+
+    print("Generating Output \n")
+    print_ir0(target_dir + "/" + f"{file_name}_{prime_name}_{size}")
+
+
+if __name__ == "__main__":
+    main(*sys.argv[1:])
