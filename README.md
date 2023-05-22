@@ -19,7 +19,7 @@ We provides two attempted implementations of this problem in this repository.
 All implementations have 
 > The only fully finished method is the dfa_counter_V2 module. An additional version of the same code is copied into the `SIEVE` branch of this repo for merging into the SIEVE repository containing other ZK proofs.
 
-### [The Big DFA](./dfa_original_V1/)
+### [I. The Big DFA](./dfa_original_V1/)
 The dfa_original_V1 folder contains the progress that we made for code implemented with triditional DFA. 
 
 In this method, we use a big DFA that contains every possible steps of the workflow given the substrings. 
@@ -164,7 +164,7 @@ assert0(latest_state - accept)
 #### limitations
 Originally, we thought [THIS METHOD](./dfa_original_V1.0/stringlist_search.py) would work fine in all cases to find strings within the stringList that appears at least once in the document; however, there are some cases that this method would not work properly. So we have started a debuging process for this method, which we stated in the [Debugging File](./dfa_original_V1.0/sls_debug.py). In this file, we have proposed a solution for the existing bug, but our solution wouldn't work with the current version of miniwizpl, since it does not support bitwise operators yet. If Miniwizpl has been updated in the future, we can look into this method to update it as needed.
 
-### [The DFA with Counter](./)
+### [II. The DFA with Counter](./)
 
 This method uses counters to verify if a file contains the substrings we are looking for. Given a list of substrings, this method will take track of a counter of each substrings, then increment counters when they are find in the document to be verified. It will certify in the end if all instances are found as intended. 
 
