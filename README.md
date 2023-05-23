@@ -222,14 +222,14 @@ cd dfa_counter_V2
 
 The coutner_stringlist_search.py is intended to be run inside the docker container. If settled with the container, run:
 ```
-python3 coutner_stringlist_search.py your_target_directory your_prime_number your_prime_name your_document_size operation
+python3 countner_stringlist_search.py your_target_directory your_prime_number your_prime_name your_document_size operation
 ```
 
 #### Running Mannuly
 
 Inside a .py file or .ipynb file, do 
 ```
-from coutner_stringlist_search.py import *
+from countner_stringlist_search.py import *
 ```
 
 Define your secret document: 
