@@ -3,7 +3,7 @@ This repository contains a example to the substring search problem in zero-knowl
 
 ### Introduction
 
-First to understand about [zero-knowledge](https://en.wikipedia.org/wiki/Zero-knowledge_proof#:~:text=Zero%2Dknowledge%3A%20if%20the%20statement,the%20prover%20knows%20the%20secret.): In a typical zk proof, there are tro parties, the verifier party and the prover party, and the prover want to prove certain facts to the varifier without reveal the evidences that he has. A zk-proof can be applied to hide evidences from the prover. In this project, we are aiming to solve the substring search problem. To be more specific, the substring search method we built is able to find if there are certain words contained in a document given a hidden document. 
+First, to understand about [zero-knowledge](https://en.wikipedia.org/wiki/Zero-knowledge_proof#:~:text=Zero%2Dknowledge%3A%20if%20the%20statement,the%20prover%20knows%20the%20secret.): In a typical zk proof, there are two parties, the verifier party and the prover party, and the prover want to prove certain facts to the varifier without reveal the evidences that he has. A zk-proof can be applied to hide evidences from the prover. In this project, we are aiming to solve the substring search problem. To be more specific, the substring search method we built is able to find if there are certain words contained in a document given a hidden document. 
 
 The code are mainly standing alone with no dependencies (especially the DFA builders). Yet, they do depend on miniwizpl as the environment, make sure this package is installed by using   
 `python3 -m pip install miniwizpl hashlib`
