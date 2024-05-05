@@ -200,18 +200,14 @@ def assign(
             position = elements.index(word)
             # print(f"{elements} try success with {state_to_implement}, {word}, position: {position}")
         except:
-            # word not in this element, state[index] back to 0
+            # word not in this target substring, state[index] back to 0
             # nextState[index] = 0
             continue  # break out of this iteration
 
-        if (
-            position == state_to_implement[index]
-        ):  # make sure word is the next word in the string (state); 
+        if (position == state_to_implement[index]):  # make sure word is the next word in the string (state); 
             # e.g. ['hi', 'peace'] try success with (1, 1), peace, position: 1
             
-            nextState[index] = (
-                state_to_implement[index] + 1
-            )  # increment the number at state[index]
+            nextState[index] = state_to_implement[index] + 1 # increment the number at state[index]
             if position == len(elements) - 1:
                 # reach to the end, increment counter
                 counterList[index] += 1
