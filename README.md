@@ -23,10 +23,12 @@ We provide two attempted implementations of this problem in this repository.
 This method uses counters to verify if a file contains the substrings we are looking for. Given a list of substrings, this method will take track of a counter of each substring, then increment counters when they are found in the document to be verified. It will certify in the end if all instances are found as intended. 
 
 #### dfa_counter_V2
-In the dfa_counter_V2 module, we introduced a fully functional solution to the substring search problem using counters. This version resolved the limitations we had in previous versions, including 
+In the dfa_counter_V2 module, we introduced a fully functional solution to the substring search problem using counters. This version resolved the limitations we had in previous trials, including 
 
-1. the problem of only allowing verification of one or more occurances of a word;
+1. the problem of only allowing verification of one or more occurrences of a word;
 2. the problem of having a string in the target string set to be a substring of another string in the target set.
+
+We resolved the problem by rewriting the DFA-building method. The new DFA-building method will ensure that the output DFA covers all scenarios when iterating the given text.
 
 The DFA looks like the following given `stringlist = ["import numpy", "avoid child abuse"]`: 
 
